@@ -1,26 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {
+  ThemeProvider,
+  theme,
+  CSSReset,
+  Box,
+  Heading,
+  DarkMode,
+} from "@chakra-ui/core/dist";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => (
+  <ThemeProvider theme={theme}>
+    <CSSReset />
+    <DarkMode>
+      <Box minH="100vh" bg="gray.800" color="white">
+        <Heading as="h1">All Cap</Heading>
+      </Box>
+    </DarkMode>
+  </ThemeProvider>
+);
 
 export default App;
