@@ -10,9 +10,9 @@ import SetupPage from "./components/pages/SetupPage";
 
 const App = () => (
   <ThemeProvider theme={theme}>
-    <CSSReset />
     <DarkMode>
-      <Box minH="100vh" bg="gray.800" color="white">
+      <CSSReset />
+      <Box minH="100vh">
         <SetupPage />
       </Box>
     </DarkMode>
