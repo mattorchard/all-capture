@@ -4,8 +4,7 @@ import RecordingTitle from "../RecordingTitle";
 import OutputSection from "../OutputSection";
 import TrackDetailsSection from "../TrackDetailsSection";
 import AddInputDeviceButton from "../AddInputDeviceButton";
-import { downloadBlob } from "../../helpers/fileHelpers";
-import { AnnotatedTrack, FakeMediaRecorder } from "../../types/MediaTypes";
+import { AnnotatedTrack } from "../../types/MediaTypes";
 import useTrackEditor from "../../hooks/useTrackEditor";
 
 const SetupPage: React.FC<{}> = () => {
@@ -37,39 +36,12 @@ const SetupPage: React.FC<{}> = () => {
     }
   };
 
-  const startRecordingTest = () => {
-    const recordingStream = new MediaStream();
-
-    const [firstVideoTrack] = state.videoTracks;
-    const [firstAudioTrack] = state.audioTracks;
-
-    recordingStream.addTrack(firstVideoTrack.track);
-    recordingStream.addTrack(firstAudioTrack.track);
-    //@ts-ignore
-    const mediaRecorder: FakeMediaRecorder = new MediaRecorder(
-      recordingStream,
-      { mimeType: "video/webm; codecs=vp9" }
-    );
-    mediaRecorder.ondataavailable = (event) => {
-      const chunk = event.data;
-      const blob = new Blob([chunk], { type: "video/webm" });
-      downloadBlob(blob, "MyExample.webm");
-    };
-    mediaRecorder.start();
-    setTimeout(() => mediaRecorder.stop(), 5000);
-  };
-
   return (
     <Flex direction="column" minHeight="100vh">
       <Flex as="header" bg="purple.700" py={2} px={4}>
         <RecordingTitle />
       </Flex>
-      <OutputSection
-        audioTracks={state.audioTracks}
-        videoTracks={state.videoTracks}
-        width={1920}
-        height={1080}
-      />
+      <OutputSection editorState={state} />
       <Stack
         as="section"
         direction="row"
@@ -81,24 +53,34 @@ const SetupPage: React.FC<{}> = () => {
           onTracksAdded={(annotatedTracks) =>
             dispatch({ type: "tracksAdded", annotatedTracks })
           }
+          isDisabled={state.isRecording}
         >
           Add Input Device
         </AddInputDeviceButton>
-        <Button leftIcon="add" onClick={addDesktopCapture}>
+        <Button
+          leftIcon="add"
+          onClick={addDesktopCapture}
+          isDisabled={state.isRecording}
+        >
           Add Desktop Capture
         </Button>
         <Button
-          variant="outline"
+          variant={state.isRecording ? "solid" : "outline"}
           variantColor="red"
           leftIcon="warning-2"
-          onClick={startRecordingTest}
+          onClick={() =>
+            dispatch({
+              type: state.isRecording ? "recordingStopped" : "recordingStarted",
+            })
+          }
         >
-          Start Recording
+          {state.isRecording ? "Stop Recording" : "Start Recording"}
         </Button>
       </Stack>
       <TrackDetailsSection
         videoTracks={state.videoTracks}
         audioTracks={state.audioTracks}
+        playPreviews={!state.isRecording}
       />
     </Flex>
   );

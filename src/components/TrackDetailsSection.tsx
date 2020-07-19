@@ -17,7 +17,8 @@ import { AnnotatedTrack } from "../types/MediaTypes";
 const TrackDetailsSection: React.FC<{
   videoTracks: AnnotatedTrack[];
   audioTracks: AnnotatedTrack[];
-}> = ({ videoTracks, audioTracks }) => {
+  playPreviews: boolean;
+}> = ({ videoTracks, audioTracks, playPreviews }) => {
   return (
     <Box as="section" bg="gray.900" p={2} flex={1}>
       <Heading as="h2" size="lg">
@@ -28,7 +29,7 @@ const TrackDetailsSection: React.FC<{
         <AccordionItem>
           <AccordionHeader>
             <Heading as="h3" size="md">
-              Video Tracks
+              Video Tracks ({videoTracks.length})
             </Heading>
             <AccordionIcon ml={2} />
           </AccordionHeader>
@@ -37,12 +38,13 @@ const TrackDetailsSection: React.FC<{
               <Text>No video tracks...yet!</Text>
             ) : (
               <Stack as="ul">
-                {videoTracks.map((annotatedTrack) => (
-                  <VideoPreview
-                    key={annotatedTrack.track.id}
-                    videoTrack={annotatedTrack.track}
-                  />
-                ))}
+                {playPreviews &&
+                  videoTracks.map((annotatedTrack) => (
+                    <VideoPreview
+                      key={annotatedTrack.track.id}
+                      videoTrack={annotatedTrack.track}
+                    />
+                  ))}
               </Stack>
             )}
           </AccordionPanel>
@@ -50,7 +52,7 @@ const TrackDetailsSection: React.FC<{
         <AccordionItem>
           <AccordionHeader>
             <Heading as="h3" size="md">
-              Audio Tracks
+              Audio Tracks ({audioTracks.length})
             </Heading>
             <AccordionIcon ml={2} />
           </AccordionHeader>
@@ -59,14 +61,15 @@ const TrackDetailsSection: React.FC<{
               <Text>No audio tracks...yet!</Text>
             ) : (
               <Stack as="ul">
-                {audioTracks.map((annotatedTrack) => (
-                  <AudioPreview
-                    key={annotatedTrack.track.id}
-                    audioTrack={annotatedTrack.track}
-                    backgroundColor="#171923"
-                    barColor="#553c9a"
-                  />
-                ))}
+                {playPreviews &&
+                  audioTracks.map((annotatedTrack) => (
+                    <AudioPreview
+                      key={annotatedTrack.track.id}
+                      audioTrack={annotatedTrack.track}
+                      backgroundColor="#171923"
+                      barColor="#553c9a"
+                    />
+                  ))}
               </Stack>
             )}
           </AccordionPanel>

@@ -1,29 +1,28 @@
 import React, { useReducer } from "react";
 import { AnnotatedTrack } from "../types/MediaTypes";
 
-interface TrackEditorState {
+export interface TrackEditorState {
   output: {
     fileName: string;
     width: number;
     height: number;
   };
+  isRecording: boolean;
   audioTracks: AnnotatedTrack[];
   videoTracks: AnnotatedTrack[];
 }
 
 type TrackEditorAction =
   | {
+      type: "trackEnded" | "recordingStarted" | "recordingStopped";
+    }
+  | {
       type: "tracksAdded";
       annotatedTracks: AnnotatedTrack[];
-    }
-  | {
-      type: "trackEnded";
-    }
-  | {
-      type: "trackRemoved";
     };
 
 const initialState: TrackEditorState = {
+  isRecording: false,
   output: {
     fileName: "MyRecording",
     width: 1920,
@@ -38,6 +37,12 @@ const trackEditorReducer = (
   action: TrackEditorAction
 ) => {
   switch (action.type) {
+    case "recordingStarted": {
+      return { ...state, isRecording: true };
+    }
+    case "recordingStopped": {
+      return { ...state, isRecording: false };
+    }
     case "tracksAdded": {
       const videoTracks = [...state.videoTracks];
       const audioTracks = [...state.audioTracks];

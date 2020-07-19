@@ -1,19 +1,31 @@
 import { useEffect, useRef } from "react";
 
-const useRafLoop = (callback: (frameIndex: number) => void) => {
-  const callbackRef = useRef<(frameIndex: number) => void | null>();
+const useRafLoop = (
+  callback: (frameIndex: number, framesPerSecond: number) => void
+) => {
+  const callbackRef = useRef<
+    (frameIndex: number, framesPerSecond: number) => void | null
+  >();
   callbackRef.current = callback;
 
   return useEffect(() => {
     let canceled = false;
     let frameIndex = 0;
-    const rafCallback = () => {
+    let lastFrameAt = performance.now();
+    const rafCallback = (now: DOMHighResTimeStamp) => {
       if (!canceled) {
         requestAnimationFrame(rafCallback);
-        if (callbackRef.current) {
-          callbackRef.current(frameIndex);
-          frameIndex = (frameIndex + 1) % 60;
+        const delta = now - lastFrameAt;
+        if (delta < 1000 / 65) {
+          console.count("Skipping frame, too early");
+          return;
         }
+        const fps = 1000 / delta;
+        if (callbackRef.current) {
+          callbackRef.current(frameIndex, fps);
+        }
+        lastFrameAt = now;
+        frameIndex = (frameIndex + 1) % 60;
       }
     };
     requestAnimationFrame(rafCallback);

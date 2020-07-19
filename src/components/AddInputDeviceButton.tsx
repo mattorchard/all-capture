@@ -99,7 +99,7 @@ const AddInputDeviceButton: React.FC<
         as={Button}
         {...buttonProps}
         // @ts-ignore
-        isDisabled={noInputsYet}
+        isDisabled={noInputsYet || buttonProps.isDisabled}
         leftIcon="add"
         rightIcon="chevron-down"
       >

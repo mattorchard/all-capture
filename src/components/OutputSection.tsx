@@ -1,9 +1,11 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Grid, Heading } from "@chakra-ui/core";
 import useRafLoop from "../hooks/useRafLoop";
 import useCanvasContext from "../hooks/useCanvasContext";
-import { AnnotatedTrack } from "../types/MediaTypes";
+import { AnnotatedTrack, FakeMediaRecorder } from "../types/MediaTypes";
 import { trackToVideo } from "../helpers/videoHelpers";
+import { TrackEditorState } from "../hooks/useTrackEditor";
+import { downloadBlob } from "../helpers/fileHelpers";
 
 // Todo: Switch to using a shared track-to-video cache
 const useTracksAsVideos = (videoTracks: AnnotatedTrack[]) =>
@@ -13,20 +15,68 @@ const useTracksAsVideos = (videoTracks: AnnotatedTrack[]) =>
     [videoTracks]
   );
 
-const OutputSection: React.FC<{
-  audioTracks: AnnotatedTrack[];
-  videoTracks: AnnotatedTrack[];
-  width: number | null;
-  height: number | null;
-}> = ({ videoTracks, width, height }) => {
-  const [, contextRef, canvasRefCallBack] = useCanvasContext();
-  const videos = useTracksAsVideos(videoTracks);
+const startRecordingTest = (
+  editorState: TrackEditorState,
+  combinedVideoTrack: MediaStreamTrack
+) => {
+  const recordingStream = new MediaStream();
 
-  useRafLoop(() => {
-    if (!contextRef.current) {
+  recordingStream.addTrack(combinedVideoTrack);
+  editorState.audioTracks.forEach((annotatedTrack) =>
+    recordingStream.addTrack(annotatedTrack.track)
+  );
+
+  //@ts-ignore
+  const mediaRecorder: FakeMediaRecorder = new MediaRecorder(recordingStream, {
+    mimeType: "video/webm; codecs=vp9",
+  });
+  mediaRecorder.ondataavailable = (event) => {
+    const chunk = event.data;
+    const blob = new Blob([chunk], { type: "video/webm" });
+    downloadBlob(blob, `${editorState.output.fileName}.webm`);
+  };
+  mediaRecorder.start();
+  return () => {
+    console.log("Stopping recording");
+    mediaRecorder.stop();
+  };
+};
+
+const OutputSection: React.FC<{
+  editorState: TrackEditorState;
+}> = ({ editorState }) => {
+  const [canvasRef, contextRef, canvasRefCallBack] = useCanvasContext();
+  const videos = useTracksAsVideos(editorState.videoTracks);
+
+  useEffect(() => {
+    if (editorState.isRecording) {
+      console.log("Start recording");
+      // Capture stream not yet supported in ts
+      // @ts-ignore
+      const canvasStream: MediaStream = canvasRef.current!.captureStream();
+
+      const canvasTracks = canvasStream.getTracks();
+      if (canvasTracks.length !== 1) {
+        throw new Error(
+          `Expected one track from canvas stream but got ${canvasTracks.length}`
+        );
+      }
+      const [outputVideoTrack] = canvasTracks;
+      return startRecordingTest(editorState, outputVideoTrack);
+    }
+    return () => {
+      console.log("Stopping non-existent recording");
+    };
+    // Todo: Add es-lint ignore message
+  }, [editorState.isRecording]);
+
+  useRafLoop((frameIndex, framesPerSecond) => {
+    if (!contextRef.current || frameIndex % 2) {
       return;
     }
     videos.forEach((video) => contextRef.current!.drawImage(video, 0, 0));
+    contextRef.current!.font = "30px Arial";
+    contextRef.current!.fillText(framesPerSecond.toFixed(3), 16, 32);
   });
 
   return (
@@ -37,8 +87,8 @@ const OutputSection: React.FC<{
       <Grid justifyContent="center" alignItems="center">
         <canvas
           ref={canvasRefCallBack}
-          width={width || 192}
-          height={height || 108}
+          width={editorState.output.width || 192}
+          height={editorState.output.height || 108}
           className="preview-canvas"
         />
       </Grid>
