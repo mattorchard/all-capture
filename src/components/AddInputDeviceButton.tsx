@@ -12,6 +12,33 @@ import {
   MenuList,
 } from "@chakra-ui/core";
 
+const getConstraintsForDeviceInfo = (
+  deviceInfo: MediaDeviceInfo
+): MediaStreamConstraints => {
+  const idToUse = deviceInfo.deviceId ? "deviceId" : "groupId";
+
+  if (deviceInfo.kind.includes("video")) {
+    return {
+      video: {
+        [idToUse]: { exact: deviceInfo[idToUse] },
+        width: 1920, // Preferred width
+      },
+      audio: false,
+    };
+  } else if (deviceInfo.kind.includes("audio")) {
+    return {
+      audio: {
+        [idToUse]: { exact: deviceInfo[idToUse] },
+      },
+      video: false,
+    };
+  } else {
+    throw new Error(
+      `Unrecognized device kind "${deviceInfo.kind}", expected video or audio`
+    );
+  }
+};
+
 const isInputDevice = (deviceInfo: MediaDeviceInfo) =>
   deviceInfo.kind.toLowerCase().includes("input");
 
@@ -50,12 +77,9 @@ const AddInputDeviceButton: React.FC<
   ]);
 
   const getTracksFromDevice = async (deviceInfo: MediaDeviceInfo) => {
-    const kind = deviceInfo.kind.includes("video") ? "video" : "audio";
-    const idKey = deviceInfo.deviceId ? "deviceId" : "groupId";
-
-    const stream = await navigator.mediaDevices.getUserMedia({
-      [kind]: { [idKey]: { exact: deviceInfo[idKey] } },
-    });
+    const stream = await navigator.mediaDevices.getUserMedia(
+      getConstraintsForDeviceInfo(deviceInfo)
+    );
     onStreamAdded(stream);
   };
 
