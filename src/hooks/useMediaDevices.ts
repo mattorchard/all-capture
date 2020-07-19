@@ -4,7 +4,7 @@ import useIncrement from "./useIncrement";
 const useMediaDevices = (): [MediaDeviceInfo[] | null, () => void] => {
   const [devices, setDevices] = useState<MediaDeviceInfo[] | null>(null);
   const [refreshId, incrementRefreshId] = useIncrement(0);
-
+  console.log(devices);
   useEffect(() => {
     let cancelled = false;
 
