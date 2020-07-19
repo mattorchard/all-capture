@@ -13,7 +13,7 @@ const useTracksAsVideos = (videoTracks: AnnotatedTrack[]) =>
     [videoTracks]
   );
 
-const PreviewSection: React.FC<{
+const OutputSection: React.FC<{
   audioTracks: AnnotatedTrack[];
   videoTracks: AnnotatedTrack[];
   width: number | null;
@@ -32,7 +32,7 @@ const PreviewSection: React.FC<{
   return (
     <Grid as="section" templateRows="auto 1fr" p={2}>
       <Heading as="h2" size="lg">
-        Preview
+        Output
       </Heading>
       <Grid justifyContent="center" alignItems="center">
         <canvas
@@ -46,4 +46,4 @@ const PreviewSection: React.FC<{
   );
 };
 
-export default PreviewSection;
+export default OutputSection;

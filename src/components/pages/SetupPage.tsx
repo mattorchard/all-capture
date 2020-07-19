@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Flex, Stack, useToast } from "@chakra-ui/core";
 import RecordingTitle from "../RecordingTitle";
-import PreviewSection from "../PreviewSection";
+import OutputSection from "../OutputSection";
 import TrackDetailsSection from "../TrackDetailsSection";
 import AddInputDeviceButton from "../AddInputDeviceButton";
 import { downloadBlob } from "../../helpers/fileHelpers";
@@ -64,7 +64,7 @@ const SetupPage: React.FC<{}> = () => {
       <Flex as="header" bg="purple.700" py={2} px={4}>
         <RecordingTitle />
       </Flex>
-      <PreviewSection
+      <OutputSection
         audioTracks={state.audioTracks}
         videoTracks={state.videoTracks}
         width={1920}
