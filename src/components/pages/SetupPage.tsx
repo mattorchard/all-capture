@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Flex, Grid, Stack, useDisclosure } from "@chakra-ui/core";
+import { Button, Flex, Stack, useDisclosure } from "@chakra-ui/core";
 import RecordingTitle from "../RecordingTitle";
 import PreviewSection from "../PreviewSection";
 import TrackDetailsSection from "../TrackDetailsSection";
@@ -16,7 +16,7 @@ const SetupPage: React.FC<{}> = () => {
   };
 
   return (
-    <Grid templateRows="auto 1fr auto 1fr" minHeight="100vh">
+    <Flex direction="column" minHeight="100vh">
       <Flex as="header" bg="purple.700" py={2} px={4}>
         <RecordingTitle />
       </Flex>
@@ -40,7 +40,7 @@ const SetupPage: React.FC<{}> = () => {
           Start Recording
         </Button>
       </Stack>
-      <TrackDetailsSection />
+      <TrackDetailsSection videoTracks={videoTracks} />
       {isOpen && (
         <AddTracksModal
           isOpen={isOpen}
@@ -48,7 +48,7 @@ const SetupPage: React.FC<{}> = () => {
           onAddedTracks={handleNewTracks}
         />
       )}
-    </Grid>
+    </Flex>
   );
 };
 
