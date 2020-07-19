@@ -11,10 +11,12 @@ import {
   Text,
 } from "@chakra-ui/core";
 import VideoPreview from "./VideoPreview";
+import AudioPreview from "./AudioPreview";
 
-const TrackDetailsSection: React.FC<{ videoTracks: MediaStreamTrack[] }> = ({
-  videoTracks,
-}) => (
+const TrackDetailsSection: React.FC<{
+  videoTracks: MediaStreamTrack[];
+  audioTracks: MediaStreamTrack[];
+}> = ({ videoTracks, audioTracks }) => (
   <Box as="section" bg="gray.900" p={2}>
     <Heading as="h2" size="lg">
       Tracks
@@ -47,7 +49,22 @@ const TrackDetailsSection: React.FC<{ videoTracks: MediaStreamTrack[] }> = ({
           </Heading>
           <AccordionIcon ml={2} />
         </AccordionHeader>
-        <AccordionPanel>AUDIOOOO</AccordionPanel>
+        <AccordionPanel>
+          {audioTracks.length === 0 ? (
+            <Text>No audio tracks...yet!</Text>
+          ) : (
+            <Stack as="ul">
+              {audioTracks.map((track) => (
+                <AudioPreview
+                  key={track.id}
+                  audioTrack={track}
+                  backgroundColor="#171923"
+                  barColor="#553c9a"
+                />
+              ))}
+            </Stack>
+          )}
+        </AccordionPanel>
       </AccordionItem>
     </Accordion>
   </Box>

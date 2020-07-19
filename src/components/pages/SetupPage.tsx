@@ -8,10 +8,16 @@ import AddTracksModal from "../AddTracksModal";
 const SetupPage: React.FC<{}> = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [videoTracks, setVideoTracks] = useState<MediaStreamTrack[]>([]);
+  const [audioTracks, setAudioTracks] = useState<MediaStreamTrack[]>([]);
+
   const handleNewTracks = (tracks: MediaStreamTrack[]) => {
     setVideoTracks((currentTracks) => [
       ...currentTracks,
       ...tracks.filter((track) => track.kind === "video"),
+    ]);
+    setAudioTracks((currentTracks) => [
+      ...currentTracks,
+      ...tracks.filter((track) => track.kind === "audio"),
     ]);
   };
 
@@ -40,7 +46,10 @@ const SetupPage: React.FC<{}> = () => {
           Start Recording
         </Button>
       </Stack>
-      <TrackDetailsSection videoTracks={videoTracks} />
+      <TrackDetailsSection
+        videoTracks={videoTracks}
+        audioTracks={audioTracks}
+      />
       {isOpen && (
         <AddTracksModal
           isOpen={isOpen}
