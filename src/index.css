@@ -5,4 +5,7 @@
 .preview-canvas {
   background-color: black;
   border: white dashed thin;
+  width: 100%;
+  max-width: 800px;
+  height: auto;
 }

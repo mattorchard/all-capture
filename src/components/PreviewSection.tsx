@@ -7,7 +7,9 @@ import useTracksAsVideos from "../hooks/useTracksAsVideos";
 const PreviewSection: React.FC<{
   audioTracks: MediaStreamTrack[];
   videoTracks: MediaStreamTrack[];
-}> = ({ videoTracks }) => {
+  width: number | null;
+  height: number | null;
+}> = ({ videoTracks, width, height }) => {
   const [, contextRef, canvasRefCallBack] = useCanvasContext();
   const videos = useTracksAsVideos(videoTracks);
 
@@ -26,8 +28,8 @@ const PreviewSection: React.FC<{
       <Grid justifyContent="center" alignItems="center">
         <canvas
           ref={canvasRefCallBack}
-          width="192"
-          height="108"
+          width={width || 192}
+          height={height || 108}
           className="preview-canvas"
         />
       </Grid>
