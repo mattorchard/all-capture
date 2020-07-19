@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Grid, Heading } from "@chakra-ui/core";
 import useRafLoop from "../hooks/useRafLoop";
 import useCanvasContext from "../hooks/useCanvasContext";
-import useTracksAsVideos from "../hooks/useTracksAsVideos";
+import { AnnotatedTrack } from "../types/MediaTypes";
+import { trackToVideo } from "../helpers/videoHelpers";
+
+// Todo: Switch to using a shared track-to-video cache
+const useTracksAsVideos = (videoTracks: AnnotatedTrack[]) =>
+  useMemo(
+    () =>
+      videoTracks.map((annotatedTrack) => trackToVideo(annotatedTrack.track)),
+    [videoTracks]
+  );
 
 const PreviewSection: React.FC<{
-  audioTracks: MediaStreamTrack[];
-  videoTracks: MediaStreamTrack[];
+  audioTracks: AnnotatedTrack[];
+  videoTracks: AnnotatedTrack[];
   width: number | null;
   height: number | null;
 }> = ({ videoTracks, width, height }) => {

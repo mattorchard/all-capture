@@ -1,33 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, Flex, Stack, useToast } from "@chakra-ui/core";
 import RecordingTitle from "../RecordingTitle";
 import PreviewSection from "../PreviewSection";
 import TrackDetailsSection from "../TrackDetailsSection";
 import AddInputDeviceButton from "../AddInputDeviceButton";
 import { downloadBlob } from "../../helpers/fileHelpers";
-
-interface FakeMediaRecorder {
-  ondataavailable: (event: { data: BlobPart }) => void;
-  stop: () => void;
-  start: () => void;
-}
+import { AnnotatedTrack, FakeMediaRecorder } from "../../types/MediaTypes";
+import useTrackEditor from "../../hooks/useTrackEditor";
 
 const SetupPage: React.FC<{}> = () => {
   const toast = useToast();
-  const [videoTracks, setVideoTracks] = useState<MediaStreamTrack[]>([]);
-  const [audioTracks, setAudioTracks] = useState<MediaStreamTrack[]>([]);
-
-  const handleNewStream = (stream: MediaStream) => {
-    const tracks = stream.getTracks();
-    setVideoTracks((currentTracks) => [
-      ...currentTracks,
-      ...tracks.filter((track) => track.kind === "video"),
-    ]);
-    setAudioTracks((currentTracks) => [
-      ...currentTracks,
-      ...tracks.filter((track) => track.kind === "audio"),
-    ]);
-  };
+  const [state, dispatch] = useTrackEditor();
 
   const addDesktopCapture = async () => {
     try {
@@ -36,7 +19,14 @@ const SetupPage: React.FC<{}> = () => {
         video: true,
         audio: true,
       });
-      handleNewStream(stream);
+      const annotatedTracks: AnnotatedTrack[] = stream
+        .getTracks()
+        .map((track) => ({
+          track,
+          settings: track.getSettings(),
+          source: "computer",
+        }));
+      dispatch({ type: "tracksAdded", annotatedTracks });
     } catch (error) {
       console.error("Unable to get display media", error);
       toast({
@@ -50,11 +40,11 @@ const SetupPage: React.FC<{}> = () => {
   const startRecordingTest = () => {
     const recordingStream = new MediaStream();
 
-    const [firstVideoTrack] = videoTracks;
-    const [firstAudioTrack] = audioTracks;
+    const [firstVideoTrack] = state.videoTracks;
+    const [firstAudioTrack] = state.audioTracks;
 
-    recordingStream.addTrack(firstVideoTrack);
-    recordingStream.addTrack(firstAudioTrack);
+    recordingStream.addTrack(firstVideoTrack.track);
+    recordingStream.addTrack(firstAudioTrack.track);
     //@ts-ignore
     const mediaRecorder: FakeMediaRecorder = new MediaRecorder(
       recordingStream,
@@ -75,8 +65,8 @@ const SetupPage: React.FC<{}> = () => {
         <RecordingTitle />
       </Flex>
       <PreviewSection
-        audioTracks={audioTracks}
-        videoTracks={videoTracks}
+        audioTracks={state.audioTracks}
+        videoTracks={state.videoTracks}
         width={1920}
         height={1080}
       />
@@ -87,7 +77,11 @@ const SetupPage: React.FC<{}> = () => {
         bg="purple.900"
         p={2}
       >
-        <AddInputDeviceButton onStreamAdded={handleNewStream}>
+        <AddInputDeviceButton
+          onTracksAdded={(annotatedTracks) =>
+            dispatch({ type: "tracksAdded", annotatedTracks })
+          }
+        >
           Add Input Device
         </AddInputDeviceButton>
         <Button leftIcon="add" onClick={addDesktopCapture}>
@@ -103,8 +97,8 @@ const SetupPage: React.FC<{}> = () => {
         </Button>
       </Stack>
       <TrackDetailsSection
-        videoTracks={videoTracks}
-        audioTracks={audioTracks}
+        videoTracks={state.videoTracks}
+        audioTracks={state.audioTracks}
       />
     </Flex>
   );

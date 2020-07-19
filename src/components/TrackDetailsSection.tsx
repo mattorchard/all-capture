@@ -12,10 +12,11 @@ import {
 } from "@chakra-ui/core";
 import VideoPreview from "./VideoPreview";
 import AudioPreview from "./AudioPreview";
+import { AnnotatedTrack } from "../types/MediaTypes";
 
 const TrackDetailsSection: React.FC<{
-  videoTracks: MediaStreamTrack[];
-  audioTracks: MediaStreamTrack[];
+  videoTracks: AnnotatedTrack[];
+  audioTracks: AnnotatedTrack[];
 }> = ({ videoTracks, audioTracks }) => {
   return (
     <Box as="section" bg="gray.900" p={2} flex={1}>
@@ -36,8 +37,11 @@ const TrackDetailsSection: React.FC<{
               <Text>No video tracks...yet!</Text>
             ) : (
               <Stack as="ul">
-                {videoTracks.map((track) => (
-                  <VideoPreview key={track.id} videoTrack={track} />
+                {videoTracks.map((annotatedTrack) => (
+                  <VideoPreview
+                    key={annotatedTrack.track.id}
+                    videoTrack={annotatedTrack.track}
+                  />
                 ))}
               </Stack>
             )}
@@ -55,10 +59,10 @@ const TrackDetailsSection: React.FC<{
               <Text>No audio tracks...yet!</Text>
             ) : (
               <Stack as="ul">
-                {audioTracks.map((track) => (
+                {audioTracks.map((annotatedTrack) => (
                   <AudioPreview
-                    key={track.id}
-                    audioTrack={track}
+                    key={annotatedTrack.track.id}
+                    audioTrack={annotatedTrack.track}
                     backgroundColor="#171923"
                     barColor="#553c9a"
                   />

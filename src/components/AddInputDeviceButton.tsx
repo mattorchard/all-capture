@@ -11,6 +11,7 @@ import {
   MenuItem,
   MenuList,
 } from "@chakra-ui/core";
+import { AnnotatedTrack } from "../types/MediaTypes";
 
 const getConstraintsForDeviceInfo = (
   deviceInfo: MediaDeviceInfo
@@ -69,8 +70,8 @@ const InputKindBadge: React.FC<{ kind: string } & BadgeProps> = ({
 };
 
 const AddInputDeviceButton: React.FC<
-  { onStreamAdded: (stream: MediaStream) => void } & ButtonProps
-> = ({ onStreamAdded, children, ...buttonProps }) => {
+  { onTracksAdded: (annotatedTracks: AnnotatedTrack[]) => void } & ButtonProps
+> = ({ onTracksAdded, children, ...buttonProps }) => {
   const [mediaDevices, updateMediaDevices] = useMediaDevices();
   const inputDevices = useMemo(() => mediaDevices?.filter(isInputDevice), [
     mediaDevices,
@@ -80,7 +81,15 @@ const AddInputDeviceButton: React.FC<
     const stream = await navigator.mediaDevices.getUserMedia(
       getConstraintsForDeviceInfo(deviceInfo)
     );
-    onStreamAdded(stream);
+    const annotatedTracks: AnnotatedTrack[] = stream
+      .getTracks()
+      .map((track) => ({
+        track,
+        deviceInfo,
+        settings: track.getSettings(),
+        source: "input-device",
+      }));
+    onTracksAdded(annotatedTracks);
   };
 
   const noInputsYet = !inputDevices || inputDevices.length === 0;
