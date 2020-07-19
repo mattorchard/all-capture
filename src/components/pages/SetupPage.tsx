@@ -4,6 +4,13 @@ import RecordingTitle from "../RecordingTitle";
 import PreviewSection from "../PreviewSection";
 import TrackDetailsSection from "../TrackDetailsSection";
 import AddInputDeviceButton from "../AddInputDeviceButton";
+import { downloadBlob } from "../../helpers/fileHelpers";
+
+interface FakeMediaRecorder {
+  ondataavailable: (event: { data: BlobPart }) => void;
+  stop: () => void;
+  start: () => void;
+}
 
 const SetupPage: React.FC<{}> = () => {
   const toast = useToast();
@@ -40,6 +47,28 @@ const SetupPage: React.FC<{}> = () => {
     }
   };
 
+  const startRecordingTest = () => {
+    const recordingStream = new MediaStream();
+
+    const [firstVideoTrack] = videoTracks;
+    const [firstAudioTrack] = audioTracks;
+
+    recordingStream.addTrack(firstVideoTrack);
+    recordingStream.addTrack(firstAudioTrack);
+    //@ts-ignore
+    const mediaRecorder: FakeMediaRecorder = new MediaRecorder(
+      recordingStream,
+      { mimeType: "video/webm; codecs=vp9" }
+    );
+    mediaRecorder.ondataavailable = (event) => {
+      const chunk = event.data;
+      const blob = new Blob([chunk], { type: "video/webm" });
+      downloadBlob(blob, "MyExample.webm");
+    };
+    mediaRecorder.start();
+    setTimeout(() => mediaRecorder.stop(), 5000);
+  };
+
   return (
     <Flex direction="column" minHeight="100vh">
       <Flex as="header" bg="purple.700" py={2} px={4}>
@@ -64,7 +93,12 @@ const SetupPage: React.FC<{}> = () => {
         <Button leftIcon="add" onClick={addDesktopCapture}>
           Add Desktop Capture
         </Button>
-        <Button variant="outline" variantColor="red" leftIcon="warning-2">
+        <Button
+          variant="outline"
+          variantColor="red"
+          leftIcon="warning-2"
+          onClick={startRecordingTest}
+        >
           Start Recording
         </Button>
       </Stack>

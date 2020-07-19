@@ -18,7 +18,7 @@ const TrackDetailsSection: React.FC<{
   audioTracks: MediaStreamTrack[];
 }> = ({ videoTracks, audioTracks }) => {
   return (
-    <Box as="section" bg="gray.900" p={2}>
+    <Box as="section" bg="gray.900" p={2} flex={1}>
       <Heading as="h2" size="lg">
         Tracks
       </Heading>

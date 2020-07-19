@@ -13,7 +13,7 @@ const RecordingTitle = () => (
       <Stack direction="row" align="center">
         <EditablePreview />
         <EditableInput />
-        <span className="file-suffix">.mp4</span>
+        <span className="file-suffix">.webm</span>
         {props.isEditing || (
           <IconButton
             icon="edit"

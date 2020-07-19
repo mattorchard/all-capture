@@ -67,6 +67,7 @@ const AddInputDeviceButton: React.FC<
         {...buttonProps}
         // @ts-ignore
         isDisabled={noInputsYet}
+        leftIcon="add"
         rightIcon="chevron-down"
       >
         {children}
