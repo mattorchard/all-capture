@@ -6,6 +6,7 @@ import { AnnotatedTrack, FakeMediaRecorder } from "../types/MediaTypes";
 import { trackToVideo } from "../helpers/videoHelpers";
 import { TrackEditorState } from "../hooks/useTrackEditor";
 import { downloadBlob } from "../helpers/fileHelpers";
+import { combineAudio } from "../helpers/mediaHelpers";
 
 // Todo: Switch to using a shared track-to-video cache
 const useTracksAsVideos = (videoTracks: AnnotatedTrack[]) =>
@@ -22,9 +23,9 @@ const startRecordingTest = (
   const recordingStream = new MediaStream();
 
   recordingStream.addTrack(combinedVideoTrack);
-  editorState.audioTracks.forEach((annotatedTrack) =>
-    recordingStream.addTrack(annotatedTrack.track)
-  );
+  const outputAudioStream = combineAudio(editorState.audioTracks);
+  const [outputAudioTrack] = outputAudioStream.getTracks();
+  recordingStream.addTrack(outputAudioTrack);
 
   //@ts-ignore
   const mediaRecorder: FakeMediaRecorder = new MediaRecorder(recordingStream, {
