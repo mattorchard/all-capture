@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
+  Flex,
   Heading,
   Stack,
   Text,
@@ -13,6 +14,7 @@ import {
 import VideoPreview from "./VideoPreview";
 import AudioPreview from "./AudioPreview";
 import { AnnotatedTrack } from "../types/MediaTypes";
+import AnchorChooser from "./AnchorChooser";
 
 const TrackDetailsSection: React.FC<{
   videoTracks: AnnotatedTrack[];
@@ -40,10 +42,13 @@ const TrackDetailsSection: React.FC<{
               <Stack as="ul">
                 {playPreviews &&
                   videoTracks.map((annotatedTrack) => (
-                    <VideoPreview
-                      key={annotatedTrack.track.id}
-                      videoTrack={annotatedTrack.track}
-                    />
+                    <Flex as="li" key={annotatedTrack.track.id}>
+                      <VideoPreview videoTrack={annotatedTrack.track} />
+                      <AnchorChooser
+                        selectedValue="middle-left"
+                        onAnchorChange={console.log}
+                      />
+                    </Flex>
                   ))}
               </Stack>
             )}
