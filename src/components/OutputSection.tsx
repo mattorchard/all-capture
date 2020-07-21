@@ -68,7 +68,9 @@ const OutputSection: React.FC<{
     return () => {
       console.log("Stopping non-existent recording");
     };
-    // Todo: Add es-lint ignore message
+    // Although all of the editorState is used by this hook, it should only
+    // re-execute when isRecording changes (and so stale values are acceptable)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editorState.isRecording]);
 
   useRafLoop((frameIndex, framesPerSecond) => {

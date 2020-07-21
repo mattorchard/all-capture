@@ -101,6 +101,7 @@ const AnchorChooser: React.FC<{
   >
     {anchorDetailOptions.map((anchorDetails) => (
       <IconButton
+        key={anchorDetails.value}
         borderRadius={0}
         bg={anchorDetails.value === selectedValue ? "gray.700" : "gray.800"}
         aria-label={anchorDetails.label}

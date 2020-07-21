@@ -6,15 +6,13 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
-  Flex,
   Heading,
   Stack,
   Text,
 } from "@chakra-ui/core";
-import VideoPreview from "./VideoPreview";
-import AudioPreview from "./AudioPreview";
 import { AnnotatedTrack } from "../types/MediaTypes";
-import AnchorChooser from "./AnchorChooser";
+import VideoDetails from "./VideoDetails";
+import AudioDetails from "./AudioDetails";
 
 const TrackDetailsSection: React.FC<{
   videoTracks: AnnotatedTrack[];
@@ -42,13 +40,11 @@ const TrackDetailsSection: React.FC<{
               <Stack as="ul">
                 {playPreviews &&
                   videoTracks.map((annotatedTrack) => (
-                    <Flex as="li" key={annotatedTrack.track.id}>
-                      <VideoPreview videoTrack={annotatedTrack.track} />
-                      <AnchorChooser
-                        selectedValue="middle-left"
-                        onAnchorChange={console.log}
-                      />
-                    </Flex>
+                    <VideoDetails
+                      key={annotatedTrack.track.id}
+                      as="li"
+                      annotatedTrack={annotatedTrack}
+                    />
                   ))}
               </Stack>
             )}
@@ -68,11 +64,10 @@ const TrackDetailsSection: React.FC<{
               <Stack as="ul">
                 {playPreviews &&
                   audioTracks.map((annotatedTrack) => (
-                    <AudioPreview
+                    <AudioDetails
                       key={annotatedTrack.track.id}
-                      audioTrack={annotatedTrack.track}
-                      backgroundColor="#171923"
-                      barColor="#553c9a"
+                      as="li"
+                      annotatedTrack={annotatedTrack}
                     />
                   ))}
               </Stack>
