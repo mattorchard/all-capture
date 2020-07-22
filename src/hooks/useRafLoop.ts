@@ -17,7 +17,7 @@ const useRafLoop = (
         requestAnimationFrame(rafCallback);
         const delta = now - lastFrameAt;
         if (delta < 1000 / 65) {
-          console.count("Skipping frame, too early");
+          // Skip the frame, it's too early, and we need to speed up to catch up
           return;
         }
         const fps = 1000 / delta;
