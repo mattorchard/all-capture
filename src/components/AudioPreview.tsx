@@ -40,14 +40,19 @@ const AudioPreview: React.FC<{
     audioAnalyzer.getByteFrequencyData(buffer);
     const volume = getVolume(buffer);
 
-    const barHeight = (volume / 256) * height;
+    const barHeight = (volume / 512) * height;
     const barWidth = 10;
     const context = contextRef.current;
-    context.drawImage(context.canvas, -barWidth, 0);
+    context.drawImage(context.canvas, -(barWidth + 2), 0);
     context.fillStyle = backgroundColor;
-    context.fillRect(width - barWidth, height, barWidth, -height);
+    context.fillRect(width - barWidth, 0, barWidth, height);
     context.fillStyle = barColor;
-    context.fillRect(width - barWidth, height, barWidth, -barHeight);
+    context.fillRect(
+      width - barWidth,
+      (height - barHeight) / 2,
+      barWidth,
+      barHeight
+    );
   });
   return (
     <canvas
