@@ -22,8 +22,15 @@ const TrackDetailsSection: React.FC<{
     index: number,
     layer: AudioLayer | VideoLayer
   ) => void;
+  onLayerMoved: (index: number, direction: "up" | "down") => void;
   disablePreviews?: boolean;
-}> = ({ videoLayers, audioLayers, onLayerChange, disablePreviews = false }) => {
+}> = ({
+  videoLayers,
+  audioLayers,
+  onLayerChange,
+  onLayerMoved,
+  disablePreviews = false,
+}) => {
   return (
     <Box as="section" bg="gray.900" p={2} flex={1}>
       <Heading as="h2" size="lg">
@@ -55,6 +62,7 @@ const TrackDetailsSection: React.FC<{
                     onAnchorChange={(anchor) =>
                       onLayerChange("video", index, { ...videoLayer, anchor })
                     }
+                    onLayerMoved={(direction) => onLayerMoved(index, direction)}
                   />
                 ))}
               </Stack>

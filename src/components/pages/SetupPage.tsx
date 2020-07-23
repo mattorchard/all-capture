@@ -81,6 +81,9 @@ const SetupPage: React.FC<{}> = () => {
         videoLayers={state.videoLayers}
         audioLayers={state.audioLayers}
         disablePreviews={state.isRecording}
+        onLayerMoved={(index, direction) =>
+          dispatch({ type: "layerMoved", index, direction })
+        }
         onLayerChange={(kind, index, layer) =>
           kind === "video"
             ? dispatch({

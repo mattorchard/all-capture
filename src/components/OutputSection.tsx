@@ -117,7 +117,7 @@ const OutputSection: React.FC<{
     if (!contextRef.current || frameIndex % 2) {
       return;
     }
-    for (let index = 0; index < videos.length; index++) {
+    for (let index = videos.length - 1; index >= 0; index--) {
       const video = videos[index];
       const videoLayer = editorState.videoLayers[index];
       const { x, y } = getPositionForLayer(editorState.output, videoLayer);

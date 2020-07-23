@@ -1,5 +1,6 @@
 import React, { useReducer } from "react";
 import { AnnotatedTrack, AudioLayer, VideoLayer } from "../types/MediaTypes";
+import { swapValues } from "../helpers/arrayHelpers";
 
 const annotatedTrackToVideoLayer = (
   annotatedTrack: AnnotatedTrack
@@ -64,6 +65,11 @@ type TrackEditorAction =
       kind: "audio";
       index: number;
       layer: AudioLayer;
+    }
+  | {
+      type: "layerMoved";
+      index: number;
+      direction: "up" | "down";
     };
 
 const initialState: TrackEditorState = {
@@ -94,9 +100,9 @@ const trackEditorReducer = (
 
       action.annotatedTracks.forEach((newTrack) => {
         if (newTrack.track.kind === "video") {
-          videoLayers.push(annotatedTrackToVideoLayer(newTrack));
+          videoLayers.unshift(annotatedTrackToVideoLayer(newTrack));
         } else if (newTrack.track.kind === "audio") {
-          audioLayers.push(annotatedTrackToAudioLayer(newTrack));
+          audioLayers.unshift(annotatedTrackToAudioLayer(newTrack));
         } else {
           throw new Error(
             `Unexpected track kind "${newTrack.track.kind}", expected audio or video`
@@ -117,6 +123,25 @@ const trackEditorReducer = (
       return {
         ...state,
         [layerKey]: layers,
+      };
+    }
+    case "layerMoved": {
+      const { index, direction } = action;
+      if (index === 0 && direction === "up") {
+        return state; // Already on top
+      }
+      if (index === state.videoLayers.length - 1 && direction === "down") {
+        return state; // Already on bottom
+      }
+      const indexOffset = direction === "up" ? -1 : 1;
+      const videoLayers = swapValues(
+        state.videoLayers,
+        index,
+        index + indexOffset
+      );
+      return {
+        ...state,
+        videoLayers,
       };
     }
     default:

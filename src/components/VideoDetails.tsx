@@ -38,12 +38,14 @@ const VideoDetails: React.FC<{
   as: React.ElementType;
   onAnchorChange: (anchor: AnchorValue) => void;
   onSizeChange: (size: Size) => void;
+  onLayerMoved: (direction: "up" | "down") => void;
   disablePreview?: boolean;
 }> = ({
   videoLayer,
   as,
   onSizeChange,
   onAnchorChange,
+  onLayerMoved,
   disablePreview = false,
 }) => (
   <Stack as={as} isInline marginBottom={8}>
@@ -88,6 +90,7 @@ const VideoDetails: React.FC<{
         aria-label="Move layer up"
         variant="ghost"
         style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
+        onClick={() => onLayerMoved("up")}
       />
       <IconButton
         icon="triangle-down"
@@ -95,6 +98,7 @@ const VideoDetails: React.FC<{
         aria-label="Move layer down"
         variant="ghost"
         style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+        onClick={() => onLayerMoved("down")}
       />
     </Flex>
   </Stack>
