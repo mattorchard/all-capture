@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from "react";
 
-const VideoPreview: React.FC<{ videoTrack: MediaStreamTrack }> = ({
-  videoTrack,
-}) => {
+const VideoPreview: React.FC<{
+  videoTrack: MediaStreamTrack;
+  isDisabled?: boolean;
+}> = ({ videoTrack, isDisabled = false }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+
   useEffect(() => {
     if (!videoRef.current) {
       console.warn("Unable to load preview when track was present");
@@ -13,6 +15,15 @@ const VideoPreview: React.FC<{ videoTrack: MediaStreamTrack }> = ({
     stream.addTrack(videoTrack);
     videoRef.current.srcObject = stream;
   }, [videoTrack]);
+
+  useEffect(() => {
+    if (isDisabled) {
+      videoRef.current?.pause();
+    } else {
+      videoRef.current?.play();
+    }
+  }, [isDisabled]);
+
   return (
     <video
       className="video-preview"

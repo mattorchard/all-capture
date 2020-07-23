@@ -1,84 +1,90 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Button,
+  Flex,
   FormControl,
   FormLabel,
   NumberInput,
   NumberInputField,
 } from "@chakra-ui/core";
+import { Size } from "../types/MediaTypes";
 
-const useVideoSizeState = (naturalWidth: number, naturalHeight: number) => {
+const useVideoSizeState = (
+  naturalWidth: number,
+  naturalHeight: number,
+  onSizeChange: (size: Size) => void
+) => {
   const aspectRatio = naturalWidth / naturalHeight;
-  const [width, setWidth] = useState(naturalWidth);
-  const [height, setHeight] = useState(naturalHeight);
+  const [width, setWidthOnly] = useState(naturalWidth);
+  const [height, setHeightOnly] = useState(naturalHeight);
+  const onSizeChangeCallbackRef = useRef(onSizeChange);
+  onSizeChangeCallbackRef.current = onSizeChange;
 
-  const onWidthChange = useCallback(
+  useEffect(() => {
+    onSizeChangeCallbackRef.current({ width, height });
+  }, [width, height]);
+
+  const setWidth = useCallback(
     (newWidth: number | string) => {
       if (typeof newWidth === "string") {
         return;
       }
-      setWidth(newWidth);
-      setHeight(Math.floor(newWidth / aspectRatio));
+      setWidthOnly(newWidth);
+      setHeightOnly(Math.floor(newWidth / aspectRatio));
     },
-    [aspectRatio, setWidth, setHeight]
+    [aspectRatio, setWidthOnly, setHeightOnly]
   );
 
-  const onHeightChange = useCallback(
+  const setHeight = useCallback(
     (newHeight: number | string) => {
       if (typeof newHeight === "string") {
         return;
       }
-      setHeight(newHeight);
-      setWidth(Math.floor(newHeight * aspectRatio));
+      setHeightOnly(newHeight);
+      setWidthOnly(Math.floor(newHeight * aspectRatio));
     },
-    [aspectRatio, setWidth, setHeight]
+    [aspectRatio, setWidthOnly, setHeightOnly]
   );
 
   const reset = useCallback(() => {
-    setWidth(naturalWidth);
-    setHeight(naturalHeight);
+    setWidthOnly(naturalWidth);
+    setHeightOnly(naturalHeight);
   }, [naturalWidth, naturalHeight]);
 
-  return { width, height, onWidthChange, onHeightChange, reset };
+  return { width, height, setWidth, setHeight, reset };
 };
 
 const VideoSizeSelector: React.FC<{
   naturalWidth: number;
   naturalHeight: number;
-  onSizeChange: (width: number, height: number) => void;
+  onSizeChange: (size: Size) => void;
 }> = ({ naturalWidth, naturalHeight, onSizeChange }) => {
-  const {
-    width,
-    height,
-    onWidthChange,
-    onHeightChange,
-    reset,
-  } = useVideoSizeState(naturalWidth, naturalHeight);
-
-  useEffect(() => {
-    if (width !== naturalWidth || height !== naturalHeight) {
-      onSizeChange(width, height);
-    }
-  }, [naturalWidth, naturalHeight, width, height, onSizeChange]);
+  const { width, height, setWidth, setHeight, reset } = useVideoSizeState(
+    naturalWidth,
+    naturalHeight,
+    onSizeChange
+  );
 
   return (
     <form>
-      <FormControl>
-        <FormLabel>
-          Width:
-          <NumberInput value={width} min={1} onChange={onWidthChange}>
-            <NumberInputField width="9ch" />
-          </NumberInput>
-        </FormLabel>
-      </FormControl>
-      <FormControl>
-        <FormLabel>
-          Height:
-          <NumberInput value={height} min={1} onChange={onHeightChange}>
-            <NumberInputField width="9ch" />
-          </NumberInput>
-        </FormLabel>
-      </FormControl>
+      <Flex justify="space-between">
+        <FormControl>
+          <FormLabel>
+            Width:
+            <NumberInput value={width} min={1} onChange={setWidth}>
+              <NumberInputField width="9ch" />
+            </NumberInput>
+          </FormLabel>
+        </FormControl>
+        <FormControl>
+          <FormLabel>
+            Height:
+            <NumberInput value={height} min={1} onChange={setHeight}>
+              <NumberInputField width="9ch" />
+            </NumberInput>
+          </FormLabel>
+        </FormControl>
+      </Flex>
       <FormControl>
         <Button type="reset" leftIcon="repeat" onClick={reset}>
           Use Natural Size

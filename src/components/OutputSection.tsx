@@ -2,11 +2,51 @@ import React, { useEffect, useMemo } from "react";
 import { Grid, Heading } from "@chakra-ui/core";
 import useRafLoop from "../hooks/useRafLoop";
 import useCanvasContext from "../hooks/useCanvasContext";
-import { AnnotatedTrack, FakeMediaRecorder } from "../types/MediaTypes";
+import {
+  AnnotatedTrack,
+  FakeMediaRecorder,
+  Size,
+  VideoLayer,
+} from "../types/MediaTypes";
 import { trackToVideo } from "../helpers/videoHelpers";
 import { TrackEditorState } from "../hooks/useTrackEditor";
 import { downloadBlob } from "../helpers/fileHelpers";
 import { combineAudio } from "../helpers/mediaHelpers";
+
+const getPositionForLayer = (
+  outputSize: Size,
+  { anchor, size: videoSize }: VideoLayer
+) => {
+  const [verticalDescriptor, horizontalDescriptor] = anchor.split("-");
+  let x = 0;
+  let y = 0;
+
+  switch (verticalDescriptor) {
+    case "top":
+      y = 0;
+      break;
+    case "middle":
+      y = Math.floor((outputSize.height - videoSize.height) / 2);
+      break;
+    case "bottom":
+      y = Math.floor(outputSize.height - videoSize.height);
+      break;
+  }
+
+  switch (horizontalDescriptor) {
+    case "left":
+      x = 0;
+      break;
+    case "middle":
+      x = Math.floor((outputSize.width - videoSize.width) / 2);
+      break;
+    case "right":
+      x = Math.floor(outputSize.width - videoSize.width);
+      break;
+  }
+
+  return { x, y };
+};
 
 // Todo: Switch to using a shared track-to-video cache
 const useTracksAsVideos = (videoTracks: AnnotatedTrack[]) =>
@@ -77,7 +117,18 @@ const OutputSection: React.FC<{
     if (!contextRef.current || frameIndex % 2) {
       return;
     }
-    videos.forEach((video) => contextRef.current!.drawImage(video, 0, 0));
+    for (let index = 0; index < videos.length; index++) {
+      const video = videos[index];
+      const videoLayer = editorState.videoLayers[index];
+      const { x, y } = getPositionForLayer(editorState.output, videoLayer);
+      if (videoLayer.naturalSize.width === videoLayer.size.width) {
+        contextRef.current!.drawImage(video, x, y);
+      } else {
+        const { width, height } = videoLayer.size;
+        contextRef.current!.drawImage(video, x, y, width, height);
+      }
+    }
+
     contextRef.current!.font = "30px Arial";
     contextRef.current!.fillText(framesPerSecond.toFixed(3), 16, 32);
   });

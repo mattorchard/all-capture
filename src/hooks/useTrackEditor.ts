@@ -52,6 +52,18 @@ type TrackEditorAction =
   | {
       type: "tracksAdded";
       annotatedTracks: AnnotatedTrack[];
+    }
+  | {
+      type: "layerChange";
+      kind: "video";
+      index: number;
+      layer: VideoLayer;
+    }
+  | {
+      type: "layerChange";
+      kind: "audio";
+      index: number;
+      layer: AudioLayer;
     };
 
 const initialState: TrackEditorState = {
@@ -95,6 +107,16 @@ const trackEditorReducer = (
         ...state,
         videoLayers,
         audioLayers,
+      };
+    }
+    case "layerChange": {
+      const layerKey = action.kind === "video" ? "videoLayers" : "audioLayers";
+      const layers = state[layerKey];
+      layers[action.index] = action.layer;
+
+      return {
+        ...state,
+        [layerKey]: layers,
       };
     }
     default:

@@ -4,7 +4,7 @@ import RecordingTitle from "../RecordingTitle";
 import OutputSection from "../OutputSection";
 import TrackDetailsSection from "../TrackDetailsSection";
 import AddInputDeviceButton from "../AddInputDeviceButton";
-import { AnnotatedTrack } from "../../types/MediaTypes";
+import { AnnotatedTrack, AudioLayer, VideoLayer } from "../../types/MediaTypes";
 import useTrackEditor from "../../hooks/useTrackEditor";
 
 const SetupPage: React.FC<{}> = () => {
@@ -80,7 +80,22 @@ const SetupPage: React.FC<{}> = () => {
       <TrackDetailsSection
         videoLayers={state.videoLayers}
         audioLayers={state.audioLayers}
-        playPreviews={!state.isRecording}
+        disablePreviews={state.isRecording}
+        onLayerChange={(kind, index, layer) =>
+          kind === "video"
+            ? dispatch({
+                type: "layerChange",
+                kind,
+                index,
+                layer: layer as VideoLayer,
+              })
+            : dispatch({
+                type: "layerChange",
+                kind,
+                index,
+                layer: layer as AudioLayer,
+              })
+        }
       />
     </Flex>
   );

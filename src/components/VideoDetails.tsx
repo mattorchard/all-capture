@@ -2,36 +2,48 @@ import React from "react";
 import VideoPreview from "./VideoPreview";
 import AnchorChooser from "./AnchorChooser";
 import { Badge, Stack } from "@chakra-ui/core";
-import { AnnotatedTrack } from "../types/MediaTypes";
+import { AnchorValue, Size, VideoLayer } from "../types/MediaTypes";
 import VideoSizeSelector from "./VideoSizeSelector";
 
 const VideoDetails: React.FC<{
-  annotatedTrack: AnnotatedTrack;
+  videoLayer: VideoLayer;
   as: React.ElementType;
-}> = ({ annotatedTrack, as }) => (
-  <Stack as={as} isInline spacing={4} shouldWrapChildren>
-    <VideoPreview videoTrack={annotatedTrack.track} />
+  onAnchorChange: (anchor: AnchorValue) => void;
+  onSizeChange: (size: Size) => void;
+  disablePreview?: boolean;
+}> = ({
+  videoLayer,
+  as,
+  onSizeChange,
+  onAnchorChange,
+  disablePreview = false,
+}) => (
+  <Stack as={as} isInline spacing={4} shouldWrapChildren marginBottom={4}>
+    <VideoPreview videoTrack={videoLayer.track} isDisabled={disablePreview} />
+
+    <AnchorChooser
+      selectedValue={videoLayer.anchor}
+      onAnchorChange={onAnchorChange}
+    />
+
+    <VideoSizeSelector
+      naturalWidth={videoLayer.settings.width || 1920}
+      naturalHeight={videoLayer.settings.height || 1080}
+      onSizeChange={onSizeChange}
+    />
 
     <Stack align="flex-start" flexWrap="wrap">
-      <Badge variantColor="pink">{annotatedTrack.source}</Badge>
-      {annotatedTrack.deviceInfo && (
+      <Badge variantColor="pink">{videoLayer.source}</Badge>
+      {videoLayer.deviceInfo && (
         <Badge variantColor="orange">
-          {annotatedTrack.deviceInfo.label || "Unlabeled Device"}
+          {videoLayer.deviceInfo.label || "Unlabeled Device"}
         </Badge>
       )}
       <Badge variantColor="teal">
-        {annotatedTrack.settings.width}x{annotatedTrack.settings.height}
+        {videoLayer.settings.width}x{videoLayer.settings.height}
       </Badge>
-      <Badge variantColor="cyan">{annotatedTrack.settings.frameRate}fps</Badge>
+      <Badge variantColor="cyan">{videoLayer.settings.frameRate}fps</Badge>
     </Stack>
-
-    <AnchorChooser selectedValue="middle-middle" onAnchorChange={console.log} />
-
-    <VideoSizeSelector
-      naturalWidth={annotatedTrack.settings.width || 1920}
-      naturalHeight={annotatedTrack.settings.height || 1080}
-      onSizeChange={console.log}
-    />
   </Stack>
 );
 

@@ -17,8 +17,13 @@ import AudioDetails from "./AudioDetails";
 const TrackDetailsSection: React.FC<{
   videoLayers: VideoLayer[];
   audioLayers: AudioLayer[];
-  playPreviews: boolean;
-}> = ({ videoLayers, audioLayers, playPreviews }) => {
+  onLayerChange: (
+    kind: "audio" | "video",
+    index: number,
+    layer: AudioLayer | VideoLayer
+  ) => void;
+  disablePreviews?: boolean;
+}> = ({ videoLayers, audioLayers, onLayerChange, disablePreviews = false }) => {
   return (
     <Box as="section" bg="gray.900" p={2} flex={1}>
       <Heading as="h2" size="lg">
@@ -38,14 +43,20 @@ const TrackDetailsSection: React.FC<{
               <Text>No video tracks...yet!</Text>
             ) : (
               <Stack as="ul">
-                {playPreviews &&
-                  videoLayers.map((annotatedTrack) => (
-                    <VideoDetails
-                      key={annotatedTrack.track.id}
-                      as="li"
-                      annotatedTrack={annotatedTrack}
-                    />
-                  ))}
+                {videoLayers.map((videoLayer, index) => (
+                  <VideoDetails
+                    key={videoLayer.track.id}
+                    as="li"
+                    videoLayer={videoLayer}
+                    disablePreview={disablePreviews}
+                    onSizeChange={(size) =>
+                      onLayerChange("video", index, { ...videoLayer, size })
+                    }
+                    onAnchorChange={(anchor) =>
+                      onLayerChange("video", index, { ...videoLayer, anchor })
+                    }
+                  />
+                ))}
               </Stack>
             )}
           </AccordionPanel>
@@ -62,7 +73,7 @@ const TrackDetailsSection: React.FC<{
               <Text>No audio tracks...yet!</Text>
             ) : (
               <Stack as="ul">
-                {playPreviews &&
+                {disablePreviews ||
                   audioLayers.map((audioLayers) => (
                     <AudioDetails
                       key={audioLayers.track.id}
