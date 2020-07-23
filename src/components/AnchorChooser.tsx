@@ -2,17 +2,7 @@ import React, { CSSProperties } from "react";
 import { Grid, IconButton } from "@chakra-ui/core";
 import { Icons } from "@chakra-ui/core/dist/theme/icons";
 import { queryAncestor } from "../helpers/domHelpers";
-
-type AnchorValue =
-  | "top-left"
-  | "top-middle"
-  | "top-right"
-  | "middle-left"
-  | "middle-middle"
-  | "middle-right"
-  | "bottom-left"
-  | "bottom-middle"
-  | "bottom-right";
+import { AnchorValue } from "../types/MediaTypes";
 
 interface AnchorDetails {
   label: string;

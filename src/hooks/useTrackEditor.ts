@@ -1,5 +1,38 @@
 import React, { useReducer } from "react";
-import { AnnotatedTrack } from "../types/MediaTypes";
+import { AnnotatedTrack, AudioLayer, VideoLayer } from "../types/MediaTypes";
+
+const annotatedTrackToVideoLayer = (
+  annotatedTrack: AnnotatedTrack
+): VideoLayer => {
+  const width = annotatedTrack.settings.width;
+  const height = annotatedTrack.settings.height;
+
+  if (!width || !height) {
+    console.error(
+      "Missing data size info in video settings",
+      annotatedTrack.settings
+    );
+    throw new Error("Missing width or height info on new video");
+  }
+
+  return {
+    ...annotatedTrack,
+    size: { width, height },
+    naturalSize: { width, height },
+    anchor: "middle-middle",
+    hidden: false,
+  };
+};
+
+const annotatedTrackToAudioLayer = (
+  annotatedTrack: AnnotatedTrack
+): AudioLayer => {
+  return {
+    ...annotatedTrack,
+    gain: 1,
+    muted: false,
+  };
+};
 
 export interface TrackEditorState {
   output: {
@@ -8,8 +41,8 @@ export interface TrackEditorState {
     height: number;
   };
   isRecording: boolean;
-  audioTracks: AnnotatedTrack[];
-  videoTracks: AnnotatedTrack[];
+  audioLayers: AudioLayer[];
+  videoLayers: VideoLayer[];
 }
 
 type TrackEditorAction =
@@ -28,8 +61,8 @@ const initialState: TrackEditorState = {
     width: 1920,
     height: 1080,
   },
-  audioTracks: [],
-  videoTracks: [],
+  audioLayers: [],
+  videoLayers: [],
 };
 
 const trackEditorReducer = (
@@ -44,14 +77,14 @@ const trackEditorReducer = (
       return { ...state, isRecording: false };
     }
     case "tracksAdded": {
-      const videoTracks = [...state.videoTracks];
-      const audioTracks = [...state.audioTracks];
+      const videoLayers = [...state.videoLayers];
+      const audioLayers = [...state.audioLayers];
 
       action.annotatedTracks.forEach((newTrack) => {
         if (newTrack.track.kind === "video") {
-          videoTracks.push(newTrack);
+          videoLayers.push(annotatedTrackToVideoLayer(newTrack));
         } else if (newTrack.track.kind === "audio") {
-          audioTracks.push(newTrack);
+          audioLayers.push(annotatedTrackToAudioLayer(newTrack));
         } else {
           throw new Error(
             `Unexpected track kind "${newTrack.track.kind}", expected audio or video`
@@ -60,8 +93,8 @@ const trackEditorReducer = (
       });
       return {
         ...state,
-        videoTracks,
-        audioTracks,
+        videoLayers,
+        audioLayers,
       };
     }
     default:

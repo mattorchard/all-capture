@@ -23,7 +23,7 @@ const startRecordingTest = (
   const recordingStream = new MediaStream();
 
   recordingStream.addTrack(combinedVideoTrack);
-  const outputAudioStream = combineAudio(editorState.audioTracks);
+  const outputAudioStream = combineAudio(editorState.audioLayers);
   const [outputAudioTrack] = outputAudioStream.getTracks();
   recordingStream.addTrack(outputAudioTrack);
 
@@ -47,7 +47,7 @@ const OutputSection: React.FC<{
   editorState: TrackEditorState;
 }> = ({ editorState }) => {
   const [canvasRef, contextRef, canvasRefCallBack] = useCanvasContext();
-  const videos = useTracksAsVideos(editorState.videoTracks);
+  const videos = useTracksAsVideos(editorState.videoLayers);
 
   useEffect(() => {
     if (editorState.isRecording) {

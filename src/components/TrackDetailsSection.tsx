@@ -10,15 +10,15 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/core";
-import { AnnotatedTrack } from "../types/MediaTypes";
+import { AudioLayer, VideoLayer } from "../types/MediaTypes";
 import VideoDetails from "./VideoDetails";
 import AudioDetails from "./AudioDetails";
 
 const TrackDetailsSection: React.FC<{
-  videoTracks: AnnotatedTrack[];
-  audioTracks: AnnotatedTrack[];
+  videoLayers: VideoLayer[];
+  audioLayers: AudioLayer[];
   playPreviews: boolean;
-}> = ({ videoTracks, audioTracks, playPreviews }) => {
+}> = ({ videoLayers, audioLayers, playPreviews }) => {
   return (
     <Box as="section" bg="gray.900" p={2} flex={1}>
       <Heading as="h2" size="lg">
@@ -29,17 +29,17 @@ const TrackDetailsSection: React.FC<{
         <AccordionItem>
           <AccordionHeader>
             <Heading as="h3" size="md">
-              Video Tracks ({videoTracks.length})
+              Video Tracks ({videoLayers.length})
             </Heading>
             <AccordionIcon ml={2} />
           </AccordionHeader>
           <AccordionPanel>
-            {videoTracks.length === 0 ? (
+            {videoLayers.length === 0 ? (
               <Text>No video tracks...yet!</Text>
             ) : (
               <Stack as="ul">
                 {playPreviews &&
-                  videoTracks.map((annotatedTrack) => (
+                  videoLayers.map((annotatedTrack) => (
                     <VideoDetails
                       key={annotatedTrack.track.id}
                       as="li"
@@ -53,21 +53,21 @@ const TrackDetailsSection: React.FC<{
         <AccordionItem>
           <AccordionHeader>
             <Heading as="h3" size="md">
-              Audio Tracks ({audioTracks.length})
+              Audio Tracks ({audioLayers.length})
             </Heading>
             <AccordionIcon ml={2} />
           </AccordionHeader>
           <AccordionPanel>
-            {audioTracks.length === 0 ? (
+            {audioLayers.length === 0 ? (
               <Text>No audio tracks...yet!</Text>
             ) : (
               <Stack as="ul">
                 {playPreviews &&
-                  audioTracks.map((annotatedTrack) => (
+                  audioLayers.map((audioLayers) => (
                     <AudioDetails
-                      key={annotatedTrack.track.id}
+                      key={audioLayers.track.id}
                       as="li"
-                      annotatedTrack={annotatedTrack}
+                      annotatedTrack={audioLayers}
                     />
                   ))}
               </Stack>

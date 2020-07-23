@@ -78,8 +78,8 @@ const SetupPage: React.FC<{}> = () => {
         </Button>
       </Stack>
       <TrackDetailsSection
-        videoTracks={state.videoTracks}
-        audioTracks={state.audioTracks}
+        videoLayers={state.videoLayers}
+        audioLayers={state.audioLayers}
         playPreviews={!state.isRecording}
       />
     </Flex>
