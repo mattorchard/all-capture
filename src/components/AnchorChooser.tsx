@@ -97,7 +97,7 @@ const AnchorChooser: React.FC<{
         aria-label={anchorDetails.label}
         data-anchor={anchorDetails.value}
         icon={anchorDetails.icon}
-        className="rotated-icon-button"
+        className="rotated-icon-button inset-focus-ring"
         style={{ "--rotation": anchorDetails.rotation || 0 } as CSSProperties}
         isDisabled={isDisabled}
       />

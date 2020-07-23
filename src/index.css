@@ -11,3 +11,8 @@
 .rotated-icon-button > svg {
   transform: rotateZ(var(--rotation));
 }
+.inset-focus-ring:focus {
+  outline: none;
+  /* Used to directly override the focus ring added by Chakra */
+  box-shadow: 0 0 0 3px rgba(66,153,225,0.6) inset !important;
+}
