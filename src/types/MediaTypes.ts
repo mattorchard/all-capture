@@ -4,6 +4,12 @@ export interface FakeMediaRecorder {
   start: () => void;
 }
 
+export interface FakeSharedScreenTrackSettings {
+  displaySurface: string;
+  cursor: string;
+  logicalSurface: boolean;
+}
+
 export interface AnnotatedTrack {
   track: MediaStreamTrack;
   settings: MediaTrackSettings;

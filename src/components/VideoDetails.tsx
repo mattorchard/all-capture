@@ -1,37 +1,15 @@
 import React from "react";
 import VideoPreview from "./VideoPreview";
 import AnchorChooser from "./AnchorChooser";
+import { Badge, Flex, IconButton, Stack } from "@chakra-ui/core";
 import {
-  Badge,
-  Flex,
-  FlexProps,
-  Heading,
-  IconButton,
-  Stack,
-} from "@chakra-ui/core";
-import { AnchorValue, Size, VideoLayer } from "../types/MediaTypes";
+  AnchorValue,
+  FakeSharedScreenTrackSettings,
+  Size,
+  VideoLayer,
+} from "../types/MediaTypes";
 import VideoSizeSelector from "./VideoSizeSelector";
-
-const VideoDetailsSection: React.FC<{ label: string } & FlexProps> = ({
-  label,
-  children,
-  ...props
-}) => {
-  return (
-    <Flex align="center" direction="column" mr={8} {...props}>
-      <Heading
-        as="h4"
-        size="sm"
-        mb={2}
-        alignSelf="flex-start"
-        borderBottomWidth={2}
-      >
-        {label}
-      </Heading>
-      {children}
-    </Flex>
-  );
-};
+import { DetailsSubSection } from "./DetailsSubSection";
 
 const VideoDetails: React.FC<{
   videoLayer: VideoLayer;
@@ -49,26 +27,26 @@ const VideoDetails: React.FC<{
   disablePreview = false,
 }) => (
   <Stack as={as} isInline marginBottom={8}>
-    <VideoDetailsSection label="Preview">
+    <DetailsSubSection label="Preview">
       <VideoPreview videoTrack={videoLayer.track} isDisabled={disablePreview} />
-    </VideoDetailsSection>
+    </DetailsSubSection>
 
-    <VideoDetailsSection label="Position">
+    <DetailsSubSection label="Position">
       <AnchorChooser
         selectedValue={videoLayer.anchor}
         onAnchorChange={onAnchorChange}
       />
-    </VideoDetailsSection>
+    </DetailsSubSection>
 
-    <VideoDetailsSection label="Size">
+    <DetailsSubSection label="Size">
       <VideoSizeSelector
         naturalWidth={videoLayer.settings.width || 1920}
         naturalHeight={videoLayer.settings.height || 1080}
         onSizeChange={onSizeChange}
       />
-    </VideoDetailsSection>
+    </DetailsSubSection>
 
-    <VideoDetailsSection label="Info">
+    <DetailsSubSection label="Info">
       <Stack align="flex-start" flexWrap="wrap">
         <Badge variantColor="pink">{videoLayer.source}</Badge>
         {videoLayer.deviceInfo && (
@@ -80,8 +58,18 @@ const VideoDetails: React.FC<{
           {videoLayer.settings.width}x{videoLayer.settings.height}
         </Badge>
         <Badge variantColor="cyan">{videoLayer.settings.frameRate}fps</Badge>
+
+        {(videoLayer.settings as FakeSharedScreenTrackSettings)
+          .displaySurface && (
+          <Badge variantColor="purple">
+            {
+              (videoLayer.settings as FakeSharedScreenTrackSettings)
+                .displaySurface
+            }
+          </Badge>
+        )}
       </Stack>
-    </VideoDetailsSection>
+    </DetailsSubSection>
 
     <Flex direction="column" alignSelf="center" marginLeft="auto">
       <IconButton

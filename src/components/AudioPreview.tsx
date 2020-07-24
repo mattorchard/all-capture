@@ -15,7 +15,15 @@ const AudioPreview: React.FC<{
   height?: number;
   backgroundColor: string;
   barColor: string;
-}> = ({ audioTrack, backgroundColor, barColor, width = 250, height = 120 }) => {
+  isDisabled?: boolean;
+}> = ({
+  audioTrack,
+  backgroundColor,
+  barColor,
+  width = 250,
+  height = 120,
+  isDisabled = false,
+}) => {
   const [, contextRef, canvasRefCallback] = useCanvasContext();
 
   const audioAnalyzer = useMemo(() => {
@@ -33,14 +41,18 @@ const AudioPreview: React.FC<{
   }, [audioTrack]);
 
   useRafLoop(() => {
-    if (!contextRef.current || audioTrack.readyState === "ended") {
+    if (
+      isDisabled ||
+      !contextRef.current ||
+      audioTrack.readyState === "ended"
+    ) {
       return;
     }
     const buffer = new Uint8Array(audioAnalyzer.frequencyBinCount);
     audioAnalyzer.getByteFrequencyData(buffer);
     const volume = getVolume(buffer);
 
-    const barHeight = (volume / 512) * height;
+    const barHeight = Math.max(2, (volume / 256) * height);
     const barWidth = 10;
     const context = contextRef.current;
     context.drawImage(context.canvas, -(barWidth + 2), 0);
@@ -59,7 +71,13 @@ const AudioPreview: React.FC<{
       ref={canvasRefCallback}
       width={width}
       height={height}
-      style={{ width: "100%", height: "auto", maxWidth: 200 }}
+      style={{
+        width: "100%",
+        height: "auto",
+        maxWidth: 200,
+        borderRadius: ".25rem",
+        backgroundColor,
+      }}
     />
   );
 };
