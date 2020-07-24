@@ -1,39 +1,12 @@
 import React, { useReducer } from "react";
 import { AnnotatedTrack, AudioLayer, VideoLayer } from "../types/MediaTypes";
 import { swapValues } from "../helpers/arrayHelpers";
-
-const annotatedTrackToVideoLayer = (
-  annotatedTrack: AnnotatedTrack
-): VideoLayer => {
-  const width = annotatedTrack.settings.width;
-  const height = annotatedTrack.settings.height;
-
-  if (!width || !height) {
-    console.error(
-      "Missing data size info in video settings",
-      annotatedTrack.settings
-    );
-    throw new Error("Missing width or height info on new video");
-  }
-
-  return {
-    ...annotatedTrack,
-    size: { width, height },
-    naturalSize: { width, height },
-    anchor: "middle-middle",
-    hidden: false,
-  };
-};
-
-const annotatedTrackToAudioLayer = (
-  annotatedTrack: AnnotatedTrack
-): AudioLayer => {
-  return {
-    ...annotatedTrack,
-    gain: 1,
-    muted: false,
-  };
-};
+import {
+  annotatedTrackToAudioLayer,
+  annotatedTrackToVideoLayer,
+  createVideoMapping,
+  VideoMapping,
+} from "../helpers/mediaHelpers";
 
 export interface TrackEditorState {
   output: {
@@ -44,6 +17,7 @@ export interface TrackEditorState {
   isRecording: boolean;
   audioLayers: AudioLayer[];
   videoLayers: VideoLayer[];
+  videoMap: VideoMapping;
 }
 
 type TrackEditorAction =
@@ -81,6 +55,7 @@ const initialState: TrackEditorState = {
   },
   audioLayers: [],
   videoLayers: [],
+  videoMap: {},
 };
 
 const trackEditorReducer = (
@@ -111,8 +86,9 @@ const trackEditorReducer = (
       });
       return {
         ...state,
-        videoLayers,
         audioLayers,
+        videoLayers,
+        videoMap: createVideoMapping(videoLayers, state.videoMap),
       };
     }
     case "layerChange": {
@@ -142,6 +118,7 @@ const trackEditorReducer = (
       return {
         ...state,
         videoLayers,
+        videoMap: createVideoMapping(videoLayers, state.videoMap),
       };
     }
     default:
@@ -157,6 +134,8 @@ const useTrackEditor = (): [
 ] => {
   const [state, dispatch] = useReducer(trackEditorReducer, initialState);
   // Todo: Use effect to auto-remove ended tracks
+  // Todo: Handle video resize events (on window / tab screen shares)
+
   return [state, dispatch];
 };
 

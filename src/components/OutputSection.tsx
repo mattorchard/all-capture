@@ -1,14 +1,8 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { Grid, Heading } from "@chakra-ui/core";
 import useRafLoop from "../hooks/useRafLoop";
 import useCanvasContext from "../hooks/useCanvasContext";
-import {
-  AnnotatedTrack,
-  FakeMediaRecorder,
-  Size,
-  VideoLayer,
-} from "../types/MediaTypes";
-import { trackToVideo } from "../helpers/videoHelpers";
+import { FakeMediaRecorder, Size, VideoLayer } from "../types/MediaTypes";
 import { TrackEditorState } from "../hooks/useTrackEditor";
 import { downloadBlob } from "../helpers/fileHelpers";
 import { combineAudio } from "../helpers/mediaHelpers";
@@ -48,14 +42,6 @@ const getPositionForLayer = (
   return { x, y };
 };
 
-// Todo: Switch to using a shared track-to-video cache
-const useTracksAsVideos = (videoTracks: AnnotatedTrack[]) =>
-  useMemo(
-    () =>
-      videoTracks.map((annotatedTrack) => trackToVideo(annotatedTrack.track)),
-    [videoTracks]
-  );
-
 const startRecordingTest = (
   editorState: TrackEditorState,
   combinedVideoTrack: MediaStreamTrack
@@ -87,7 +73,6 @@ const OutputSection: React.FC<{
   editorState: TrackEditorState;
 }> = ({ editorState }) => {
   const [canvasRef, contextRef, canvasRefCallBack] = useCanvasContext();
-  const videos = useTracksAsVideos(editorState.videoLayers);
 
   useEffect(() => {
     if (editorState.isRecording) {
@@ -117,9 +102,9 @@ const OutputSection: React.FC<{
     if (!contextRef.current || frameIndex % 2) {
       return;
     }
-    for (let index = videos.length - 1; index >= 0; index--) {
-      const video = videos[index];
+    for (let index = editorState.videoLayers.length - 1; index >= 0; index--) {
       const videoLayer = editorState.videoLayers[index];
+      const video = editorState.videoMap[videoLayer.track.id];
       const { x, y } = getPositionForLayer(editorState.output, videoLayer);
       if (videoLayer.naturalSize.width === videoLayer.size.width) {
         contextRef.current!.drawImage(video, x, y);
