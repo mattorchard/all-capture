@@ -29,7 +29,7 @@ const AudioDetails: React.FC<{
 }) => {
   const [gainState, setGainState] = useState<number | string>(audioLayer.gain);
   return (
-    <Flex as={as}>
+    <Flex as={as} mb={8}>
       <DetailsSubSection label="Preview">
         <AudioPreview
           key={audioLayer.track.id}

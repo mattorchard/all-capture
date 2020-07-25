@@ -26,7 +26,7 @@ const VideoDetails: React.FC<{
   onLayerMoved,
   disablePreview = false,
 }) => (
-  <Flex as={as}>
+  <Flex as={as} mb={8}>
     <DetailsSubSection label="Preview">
       <VideoPreview videoTrack={videoLayer.track} isDisabled={disablePreview} />
     </DetailsSubSection>
