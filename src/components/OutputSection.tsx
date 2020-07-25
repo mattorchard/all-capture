@@ -174,6 +174,7 @@ const OutputSection: React.FC<{
         width={fpsCanvasSize.width}
         height={fpsCanvasSize.height}
         className="fps-canvas"
+        title="Frame rate"
       />
     </Stack>
   );

@@ -6,7 +6,7 @@ export const DetailsSubSection: React.FC<{ label: string } & FlexProps> = ({
   children,
   ...props
 }) => (
-  <Flex align="center" direction="column" mr={8} {...props}>
+  <Flex align="center" direction="column" mr={8} {...props} className="test">
     <Heading
       as="h4"
       size="sm"

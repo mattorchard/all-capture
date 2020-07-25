@@ -26,7 +26,7 @@ const VideoDetails: React.FC<{
   onLayerMoved,
   disablePreview = false,
 }) => (
-  <Stack as={as} isInline marginBottom={8}>
+  <Flex as={as}>
     <DetailsSubSection label="Preview">
       <VideoPreview videoTrack={videoLayer.track} isDisabled={disablePreview} />
     </DetailsSubSection>
@@ -89,7 +89,7 @@ const VideoDetails: React.FC<{
         onClick={() => onLayerMoved("down")}
       />
     </Flex>
-  </Stack>
+  </Flex>
 );
 
 export default VideoDetails;
