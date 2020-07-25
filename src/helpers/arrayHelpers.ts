@@ -21,3 +21,8 @@ export const swapValues = <T>(
   newArray[indexB] = array[indexA];
   return newArray;
 };
+
+export const filterOutIndex = (indexToRemove: number) => (
+  item: any,
+  index: number
+) => indexToRemove !== index;

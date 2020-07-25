@@ -1,10 +1,11 @@
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import { AnnotatedTrack, AudioLayer, VideoLayer } from "../types/MediaTypes";
-import { swapValues } from "../helpers/arrayHelpers";
+import { filterOutIndex, swapValues } from "../helpers/arrayHelpers";
 import {
   annotatedTrackToAudioLayer,
   annotatedTrackToVideoLayer,
   createVideoMapping,
+  layerIsLive,
   VideoMapping,
 } from "../helpers/mediaHelpers";
 
@@ -22,7 +23,8 @@ export interface TrackEditorState {
 
 type TrackEditorAction =
   | {
-      type: "trackEnded" | "recordingStarted" | "recordingStopped";
+      // Actions with no additional params
+      type: "recordingStarted" | "recordingStopped" | "trackEnded";
     }
   | {
       type: "tracksAdded";
@@ -44,6 +46,11 @@ type TrackEditorAction =
       type: "layerMoved";
       index: number;
       direction: "up" | "down";
+    }
+  | {
+      type: "removeTrack";
+      index: number;
+      kind: "audio" | "video";
     };
 
 const initialState: TrackEditorState = {
@@ -121,10 +128,36 @@ const trackEditorReducer = (
         videoMap: createVideoMapping(videoLayers, state.videoMap),
       };
     }
-    default:
-      throw new Error(
-        `Got unrecognized action type in trackEditorReducer "${action.type}"`
-      );
+    case "removeTrack": {
+      const { index, kind } = action;
+
+      if (kind === "video") {
+        state.videoLayers[index].track.stop();
+        const videoLayers = state.videoLayers.filter(filterOutIndex(index));
+        return {
+          ...state,
+          videoLayers,
+          videoMap: createVideoMapping(videoLayers, state.videoMap),
+        };
+      } else {
+        state.audioLayers[index].track.stop();
+        const audioLayers = state.audioLayers.filter(filterOutIndex(index));
+        return {
+          ...state,
+          audioLayers,
+        };
+      }
+    }
+    case "trackEnded": {
+      const videoLayers = state.videoLayers.filter(layerIsLive);
+      const audioLayers = state.audioLayers.filter(layerIsLive);
+      return {
+        ...state,
+        audioLayers,
+        videoLayers,
+        videoMap: createVideoMapping(videoLayers, state.videoMap),
+      };
+    }
   }
 };
 
@@ -133,7 +166,31 @@ const useTrackEditor = (): [
   React.Dispatch<TrackEditorAction>
 ] => {
   const [state, dispatch] = useReducer(trackEditorReducer, initialState);
-  // Todo: Use effect to auto-remove ended tracks
+
+  const { videoLayers, audioLayers } = state;
+  useEffect(() => {
+    const allTracks = [
+      ...audioLayers.map((layer) => layer.track),
+      ...videoLayers.map((layer) => layer.track),
+    ];
+
+    const handleTrackEnd = (event: Event) => {
+      if (event.currentTarget instanceof MediaStreamTrack) {
+        event.currentTarget.stop();
+      }
+      dispatch({ type: "trackEnded" });
+    };
+
+    allTracks.forEach((track) => {
+      track.addEventListener("ended", handleTrackEnd);
+    });
+
+    return () =>
+      allTracks.forEach((track) =>
+        track.removeEventListener("ended", handleTrackEnd)
+      );
+  }, [videoLayers, audioLayers, dispatch]);
+
   // Todo: Handle video resize events (on window / tab screen shares)
 
   return [state, dispatch];

@@ -95,3 +95,6 @@ export const createVideoMapping = (
 
   return newTrackMapping;
 };
+
+export const layerIsLive = ({ track }: { track: MediaStreamTrack }) =>
+  track.readyState === "live";

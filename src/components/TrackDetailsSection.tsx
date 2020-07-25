@@ -14,6 +14,7 @@ const TrackDetailsSection: React.FC<{
     layer: AudioLayer | VideoLayer
   ) => void;
   onLayerMoved: (index: number, direction: "up" | "down") => void;
+  onRemoveTrack: (kind: "audio" | "video", index: number) => void;
   disablePreviews?: boolean;
 }> = ({
   videoLayers,
@@ -21,6 +22,7 @@ const TrackDetailsSection: React.FC<{
   onLayerChange,
   onLayerMoved,
   outputSize,
+  onRemoveTrack,
   disablePreviews = false,
 }) => {
   return (
@@ -53,6 +55,7 @@ const TrackDetailsSection: React.FC<{
                   onLayerChange("video", index, { ...videoLayer, anchor })
                 }
                 onLayerMoved={(direction) => onLayerMoved(index, direction)}
+                onRemoveTrack={() => onRemoveTrack("video", index)}
               />
             ))}
           </Stack>
@@ -82,6 +85,7 @@ const TrackDetailsSection: React.FC<{
                     muted: !audioLayer.muted,
                   })
                 }
+                onRemoveTrack={() => onRemoveTrack("audio", index)}
               />
             ))}
           </Stack>

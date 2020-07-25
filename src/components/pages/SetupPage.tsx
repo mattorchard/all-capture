@@ -106,6 +106,9 @@ const SetupPage: React.FC<{}> = () => {
                 layer: layer as AudioLayer,
               })
         }
+        onRemoveTrack={(kind, index) =>
+          dispatch({ type: "removeTrack", kind, index })
+        }
       />
     </Flex>
   );

@@ -4,6 +4,7 @@ import {
   Badge,
   Button,
   Flex,
+  IconButton,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -20,11 +21,13 @@ const AudioDetails: React.FC<{
   disablePreview?: boolean;
   onGainChange: (gain: number) => void;
   onMuteToggle: () => void;
+  onRemoveTrack: () => void;
 }> = ({
   audioLayer,
   as,
   onGainChange,
   onMuteToggle,
+  onRemoveTrack,
   disablePreview = false,
 }) => {
   const [gainState, setGainState] = useState<number | string>(audioLayer.gain);
@@ -83,6 +86,15 @@ const AudioDetails: React.FC<{
           )}
         </Stack>
       </DetailsSubSection>
+
+      <IconButton
+        onClick={onRemoveTrack}
+        aria-label="Remove track"
+        title="Remove track"
+        icon="close"
+        variant="ghost"
+        ml="auto"
+      />
     </Flex>
   );
 };

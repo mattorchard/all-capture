@@ -15,6 +15,7 @@ const VideoDetails: React.FC<{
   videoLayer: VideoLayer;
   as: React.ElementType;
   outputSize: Size;
+  onRemoveTrack: () => void;
   onAnchorChange: (anchor: AnchorValue) => void;
   onSizeChange: (size: Size) => void;
   onLayerMoved: (direction: "up" | "down") => void;
@@ -22,6 +23,7 @@ const VideoDetails: React.FC<{
 }> = ({
   videoLayer,
   as,
+  onRemoveTrack,
   onSizeChange,
   onAnchorChange,
   onLayerMoved,
@@ -95,6 +97,7 @@ const VideoDetails: React.FC<{
     </Flex>
 
     <IconButton
+      onClick={onRemoveTrack}
       aria-label="Remove track"
       title="Remove track"
       icon="close"
