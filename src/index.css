@@ -8,6 +8,12 @@
   max-width: 800px;
   height: auto;
 }
+.fps-canvas {
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+}
 .rotated-icon-button > svg {
   transform: rotateZ(var(--rotation));
 }

@@ -50,8 +50,8 @@ const initialState: TrackEditorState = {
   isRecording: false,
   output: {
     fileName: "MyRecording",
-    width: 1920,
-    height: 1080,
+    width: 1280,
+    height: 720,
   },
   audioLayers: [],
   videoLayers: [],

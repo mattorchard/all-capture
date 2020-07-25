@@ -1,11 +1,20 @@
 import React, { useEffect } from "react";
-import { Grid, Heading } from "@chakra-ui/core";
+import { Flex, Grid, Heading } from "@chakra-ui/core";
 import useRafLoop from "../hooks/useRafLoop";
 import useCanvasContext from "../hooks/useCanvasContext";
 import { FakeMediaRecorder, Size, VideoLayer } from "../types/MediaTypes";
 import { TrackEditorState } from "../hooks/useTrackEditor";
 import { downloadBlob } from "../helpers/fileHelpers";
 import { combineAudio } from "../helpers/mediaHelpers";
+
+const getColorForFrameRate = (frameRate: number) => {
+  const normalizedFrameRate = frameRate / 60;
+  const red = (1 - normalizedFrameRate) * 255;
+  const green = normalizedFrameRate * 255;
+  const blue = 64;
+  const alpha = Math.max(0.1, 1 - normalizedFrameRate);
+  return `rgba(${red},${green},${blue}, ${alpha})`;
+};
 
 const getPositionForLayer = (
   outputSize: Size,
@@ -58,6 +67,7 @@ const startRecordingTest = (
     mimeType: "video/webm; codecs=vp9",
   });
   mediaRecorder.ondataavailable = (event) => {
+    combinedVideoTrack.stop();
     const chunk = event.data;
     const blob = new Blob([chunk], { type: "video/webm" });
     downloadBlob(blob, `${editorState.output.fileName}.webm`);
@@ -69,17 +79,23 @@ const startRecordingTest = (
   };
 };
 
+const fpsCanvasSize = { width: 1200, height: 60 };
+
 const OutputSection: React.FC<{
   editorState: TrackEditorState;
 }> = ({ editorState }) => {
   const [canvasRef, contextRef, canvasRefCallBack] = useCanvasContext();
+  const [
+    fpsCanvasRef,
+    fpsContextRef,
+    fpsCanvasRefCallBack,
+  ] = useCanvasContext();
 
   useEffect(() => {
     if (editorState.isRecording) {
       console.log("Start recording");
-      // Capture stream not yet supported in ts
-      // @ts-ignore
-      const canvasStream: MediaStream = canvasRef.current!.captureStream();
+      // @ts-ignore Capture stream not yet supported in TS
+      const canvasStream: MediaStream = canvasRef.current!.captureStream(30);
 
       const canvasTracks = canvasStream.getTracks();
       if (canvasTracks.length !== 1) {
@@ -113,9 +129,24 @@ const OutputSection: React.FC<{
         contextRef.current!.drawImage(video, x, y, width, height);
       }
     }
-
-    contextRef.current!.font = "30px Arial";
-    contextRef.current!.fillText(framesPerSecond.toFixed(3), 16, 32);
+    if (fpsContextRef.current && fpsCanvasRef.current) {
+      const barWidth = 10;
+      fpsContextRef.current.drawImage(fpsCanvasRef.current, -(barWidth + 2), 0);
+      fpsContextRef.current.fillStyle = "#1A202C";
+      fpsContextRef.current.fillRect(
+        fpsCanvasSize.width,
+        0,
+        -barWidth,
+        fpsCanvasSize.height
+      );
+      fpsContextRef.current.fillStyle = getColorForFrameRate(framesPerSecond);
+      fpsContextRef.current.fillRect(
+        fpsCanvasSize.width,
+        fpsCanvasSize.height,
+        -barWidth,
+        -framesPerSecond
+      );
+    }
   });
 
   return (
@@ -123,14 +154,20 @@ const OutputSection: React.FC<{
       <Heading as="h2" size="lg">
         Output
       </Heading>
-      <Grid justifyContent="center" alignItems="center">
+      <Flex direction="column" justifyContent="center" justifySelf="center">
         <canvas
           ref={canvasRefCallBack}
-          width={editorState.output.width || 192}
-          height={editorState.output.height || 108}
+          width={editorState.output.width}
+          height={editorState.output.height}
           className="preview-canvas"
         />
-      </Grid>
+        <canvas
+          ref={fpsCanvasRefCallBack}
+          width={fpsCanvasSize.width}
+          height={fpsCanvasSize.height}
+          className="fps-canvas"
+        />
+      </Flex>
     </Grid>
   );
 };
