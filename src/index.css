@@ -21,3 +21,22 @@
   /* Used to directly override the focus ring added by Chakra */
   box-shadow: 0 0 0 3px rgba(66,153,225,0.6) inset !important;
 }
+
+:root {
+  --scrollbar-background: #1a202c;
+  --thumb-background: #44337A;
+}
+
+::-webkit-scrollbar {
+  width: 11px;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--thumb-background) var(--scrollbar-background);
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-background);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--thumb-background) ;
+}
