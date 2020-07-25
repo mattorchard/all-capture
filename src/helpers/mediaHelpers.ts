@@ -1,16 +1,28 @@
 import { AnnotatedTrack, AudioLayer, VideoLayer } from "../types/MediaTypes";
 import { trackToVideo } from "./videoHelpers";
 
-export const combineAudio = (audioTracks: AnnotatedTrack[]) => {
+export const combineAudio = (layers: AudioLayer[]) => {
   const context = new AudioContext();
-  const sources = audioTracks.map((annotatedTrack) => {
-    const inputStream = new MediaStream();
-    inputStream.addTrack(annotatedTrack.track);
-    return context.createMediaStreamSource(inputStream);
-  });
   const destination = context.createMediaStreamDestination();
-  // Todo: Add gain node for volume control
-  sources.forEach((source) => source.connect(destination));
+
+  layers.forEach((layer) => {
+    if (layer.muted) {
+      return; // Don't bother adding this layer
+    }
+    // Convert track to audio source
+    const inputStream = new MediaStream();
+    inputStream.addTrack(layer.track);
+    const source = context.createMediaStreamSource(inputStream);
+
+    // Create gain node for volume adjustment
+    const gainNode = context.createGain();
+    gainNode.gain.setValueAtTime(layer.gain, 0);
+
+    // Connect up to audio graph
+    source.connect(gainNode);
+    gainNode.connect(destination);
+  });
+
   return destination.stream;
 };
 

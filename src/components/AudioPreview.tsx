@@ -13,6 +13,7 @@ const AudioPreview: React.FC<{
   audioTrack: MediaStreamTrack;
   width?: number;
   height?: number;
+  gain: number;
   backgroundColor: string;
   barColor: string;
   isDisabled?: boolean;
@@ -20,6 +21,7 @@ const AudioPreview: React.FC<{
   audioTrack,
   backgroundColor,
   barColor,
+  gain,
   width = 250,
   height = 120,
   isDisabled = false,
@@ -52,7 +54,7 @@ const AudioPreview: React.FC<{
     audioAnalyzer.getByteFrequencyData(buffer);
     const volume = getVolume(buffer);
 
-    const barHeight = Math.max(2, (volume / 256) * height);
+    const barHeight = Math.max(2, (volume / 256) * height * gain);
     const barWidth = 10;
     const context = contextRef.current;
     context.drawImage(context.canvas, -(barWidth + 2), 0);

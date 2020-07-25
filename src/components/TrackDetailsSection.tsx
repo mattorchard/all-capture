@@ -85,12 +85,21 @@ const TrackDetailsSection: React.FC<{
                 <Text>No audio tracks...yet!</Text>
               ) : (
                 <Stack as="ul">
-                  {audioLayers.map((audioLayers) => (
+                  {audioLayers.map((audioLayer, index) => (
                     <AudioDetails
-                      key={audioLayers.track.id}
+                      key={audioLayer.track.id}
                       as="li"
-                      audioLayer={audioLayers}
+                      audioLayer={audioLayer}
                       disablePreview={disablePreviews}
+                      onGainChange={(gain) =>
+                        onLayerChange("audio", index, { ...audioLayer, gain })
+                      }
+                      onMuteToggle={() =>
+                        onLayerChange("audio", index, {
+                          ...audioLayer,
+                          muted: !audioLayer.muted,
+                        })
+                      }
                     />
                   ))}
                 </Stack>
