@@ -11,7 +11,7 @@ const SetupPage: React.FC<{}> = () => {
   const toast = useToast();
   const [state, dispatch] = useTrackEditor();
 
-  const addDesktopCapture = async () => {
+  const addComputerCapture = async () => {
     try {
       // @ts-ignore
       const stream: MediaStream = await navigator.mediaDevices.getDisplayMedia({
@@ -29,9 +29,9 @@ const SetupPage: React.FC<{}> = () => {
     } catch (error) {
       console.error("Unable to get display media", error);
       toast({
-        status: "error",
-        title: "Error",
-        description: "Error, unable trying to record computer",
+        status: "warning",
+        title: "Uh Oh",
+        description: "Didn't get permission to start computer capture",
       });
     }
   };
@@ -54,20 +54,31 @@ const SetupPage: React.FC<{}> = () => {
         </AddInputDeviceButton>
         <Button
           leftIcon="add"
-          onClick={addDesktopCapture}
+          onClick={addComputerCapture}
           isDisabled={state.isRecording}
         >
-          Add Desktop Capture
+          Add Computer Capture
         </Button>
         <Button
           variant={state.isRecording ? "solid" : "outline"}
           variantColor="red"
           leftIcon="warning-2"
-          onClick={() =>
-            dispatch({
-              type: state.isRecording ? "recordingStopped" : "recordingStarted",
-            })
-          }
+          onClick={() => {
+            if (!state.isRecording && state.videoLayers.length < 1) {
+              toast({
+                status: "warning",
+                title: "Cannot Record",
+                description:
+                  "You must have at least one video track to begin recording",
+              });
+            } else {
+              dispatch({
+                type: state.isRecording
+                  ? "recordingStopped"
+                  : "recordingStarted",
+              });
+            }
+          }}
         >
           {state.isRecording ? "Stop Recording" : "Start Recording"}
         </Button>

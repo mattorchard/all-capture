@@ -89,6 +89,8 @@ const VideoDetails: React.FC<{
         onClick={() => onLayerMoved("down")}
       />
     </Flex>
+
+    <IconButton aria-label="Remove track" title="Remove track" />
   </Flex>
 );
 
