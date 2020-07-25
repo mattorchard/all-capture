@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Flex, Grid, Heading } from "@chakra-ui/core";
+import { Heading, Stack } from "@chakra-ui/core";
 import useRafLoop from "../hooks/useRafLoop";
 import useCanvasContext from "../hooks/useCanvasContext";
 import { FakeMediaRecorder, Size, VideoLayer } from "../types/MediaTypes";
@@ -150,25 +150,32 @@ const OutputSection: React.FC<{
   });
 
   return (
-    <Grid as="section" templateRows="auto 1fr" p={2}>
+    <Stack
+      as="section"
+      p={2}
+      direction="column"
+      justifyContent="center"
+      justifySelf="center"
+      alignSelf="center"
+      spacing={2}
+      shouldWrapChildren
+    >
       <Heading as="h2" size="lg">
         Output
       </Heading>
-      <Flex direction="column" justifyContent="center" justifySelf="center">
-        <canvas
-          ref={canvasRefCallBack}
-          width={editorState.output.width}
-          height={editorState.output.height}
-          className="preview-canvas"
-        />
-        <canvas
-          ref={fpsCanvasRefCallBack}
-          width={fpsCanvasSize.width}
-          height={fpsCanvasSize.height}
-          className="fps-canvas"
-        />
-      </Flex>
-    </Grid>
+      <canvas
+        ref={canvasRefCallBack}
+        width={editorState.output.width}
+        height={editorState.output.height}
+        className="preview-canvas"
+      />
+      <canvas
+        ref={fpsCanvasRefCallBack}
+        width={fpsCanvasSize.width}
+        height={fpsCanvasSize.height}
+        className="fps-canvas"
+      />
+    </Stack>
   );
 };
 

@@ -41,14 +41,9 @@ const SetupPage: React.FC<{}> = () => {
       <Flex as="header" bg="purple.700" py={2} px={4}>
         <RecordingTitle />
       </Flex>
+
       <OutputSection editorState={state} />
-      <Stack
-        as="section"
-        direction="row"
-        justify="center"
-        bg="purple.900"
-        p={2}
-      >
+      <Stack as="section" isInline justify="center" bg="purple.900" p={2}>
         <AddInputDeviceButton
           onTracksAdded={(annotatedTracks) =>
             dispatch({ type: "tracksAdded", annotatedTracks })
