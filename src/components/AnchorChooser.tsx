@@ -100,6 +100,7 @@ const AnchorChooser: React.FC<{
         className="rotated-icon-button inset-focus-ring"
         style={{ "--rotation": anchorDetails.rotation || 0 } as CSSProperties}
         isDisabled={isDisabled}
+        size="sm"
       />
     ))}
   </Grid>

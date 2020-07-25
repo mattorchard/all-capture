@@ -1,7 +1,7 @@
 import React from "react";
 import VideoPreview from "./VideoPreview";
 import AnchorChooser from "./AnchorChooser";
-import { Badge, Flex, IconButton, Stack } from "@chakra-ui/core";
+import { Badge, Box, Flex, IconButton, Stack } from "@chakra-ui/core";
 import {
   AnchorValue,
   FakeSharedScreenTrackSettings,
@@ -14,6 +14,7 @@ import { DetailsSubSection } from "./DetailsSubSection";
 const VideoDetails: React.FC<{
   videoLayer: VideoLayer;
   as: React.ElementType;
+  outputSize: Size;
   onAnchorChange: (anchor: AnchorValue) => void;
   onSizeChange: (size: Size) => void;
   onLayerMoved: (direction: "up" | "down") => void;
@@ -24,6 +25,7 @@ const VideoDetails: React.FC<{
   onSizeChange,
   onAnchorChange,
   onLayerMoved,
+  outputSize,
   disablePreview = false,
 }) => (
   <Flex as={as} mb={8}>
@@ -32,16 +34,18 @@ const VideoDetails: React.FC<{
     </DetailsSubSection>
 
     <DetailsSubSection label="Position">
-      <AnchorChooser
-        selectedValue={videoLayer.anchor}
-        onAnchorChange={onAnchorChange}
-      />
+      <Box my="auto">
+        <AnchorChooser
+          selectedValue={videoLayer.anchor}
+          onAnchorChange={onAnchorChange}
+        />
+      </Box>
     </DetailsSubSection>
 
     <DetailsSubSection label="Size">
       <VideoSizeSelector
-        naturalWidth={videoLayer.settings.width || 1920}
-        naturalHeight={videoLayer.settings.height || 1080}
+        naturalSize={videoLayer.naturalSize}
+        outputSize={outputSize}
         onSizeChange={onSizeChange}
       />
     </DetailsSubSection>
@@ -90,7 +94,12 @@ const VideoDetails: React.FC<{
       />
     </Flex>
 
-    <IconButton aria-label="Remove track" title="Remove track" />
+    <IconButton
+      aria-label="Remove track"
+      title="Remove track"
+      icon="close"
+      variant="ghost"
+    />
   </Flex>
 );
 

@@ -1,12 +1,13 @@
 import React from "react";
 import { Box, Divider, Flex, Heading, Stack, Text } from "@chakra-ui/core";
-import { AudioLayer, VideoLayer } from "../types/MediaTypes";
+import { AudioLayer, Size, VideoLayer } from "../types/MediaTypes";
 import VideoDetails from "./VideoDetails";
 import AudioDetails from "./AudioDetails";
 
 const TrackDetailsSection: React.FC<{
   videoLayers: VideoLayer[];
   audioLayers: AudioLayer[];
+  outputSize: Size;
   onLayerChange: (
     kind: "audio" | "video",
     index: number,
@@ -19,6 +20,7 @@ const TrackDetailsSection: React.FC<{
   audioLayers,
   onLayerChange,
   onLayerMoved,
+  outputSize,
   disablePreviews = false,
 }) => {
   return (
@@ -42,6 +44,7 @@ const TrackDetailsSection: React.FC<{
                 key={videoLayer.track.id}
                 as="li"
                 videoLayer={videoLayer}
+                outputSize={outputSize}
                 disablePreview={disablePreviews}
                 onSizeChange={(size) =>
                   onLayerChange("video", index, { ...videoLayer, size })

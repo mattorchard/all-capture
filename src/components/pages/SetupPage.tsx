@@ -86,6 +86,7 @@ const SetupPage: React.FC<{}> = () => {
       <TrackDetailsSection
         videoLayers={state.videoLayers}
         audioLayers={state.audioLayers}
+        outputSize={state.output}
         disablePreviews={state.isRecording}
         onLayerMoved={(index, direction) =>
           dispatch({ type: "layerMoved", index, direction })

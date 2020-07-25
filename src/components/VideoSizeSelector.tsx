@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Button,
   Flex,
@@ -10,63 +10,68 @@ import {
 import { Size } from "../types/MediaTypes";
 
 const useVideoSizeState = (
-  naturalWidth: number,
-  naturalHeight: number,
+  naturalSize: Size,
+  outputSize: Size,
   onSizeChange: (size: Size) => void
 ) => {
+  const { width: naturalWidth, height: naturalHeight } = naturalSize;
+  const { width: outputWidth, height: outputHeight } = outputSize;
   const aspectRatio = naturalWidth / naturalHeight;
-  const [width, setWidthOnly] = useState(naturalWidth);
-  const [height, setHeightOnly] = useState(naturalHeight);
+
+  const [width, setWidthOnly] = useState<number | string>(naturalWidth);
+  const [height, setHeightOnly] = useState<number | string>(naturalHeight);
   const onSizeChangeCallbackRef = useRef(onSizeChange);
   onSizeChangeCallbackRef.current = onSizeChange;
 
-  useEffect(() => {
-    onSizeChangeCallbackRef.current({ width, height });
-  }, [width, height]);
+  const setSize = (width: number, height: number) => {
+    setWidthOnly(width);
+    setHeightOnly(height);
+    onSizeChange({ width, height });
+  };
 
-  const setWidth = useCallback(
-    (newWidth: number | string) => {
-      if (typeof newWidth === "string") {
-        return;
-      }
+  const setWidth = (newWidth: number | string) => {
+    if (typeof newWidth === "string") {
       setWidthOnly(newWidth);
-      setHeightOnly(Math.floor(newWidth / aspectRatio));
-    },
-    [aspectRatio, setWidthOnly, setHeightOnly]
-  );
+    } else {
+      setSize(newWidth, Math.floor(newWidth / aspectRatio));
+    }
+  };
 
-  const setHeight = useCallback(
-    (newHeight: number | string) => {
-      if (typeof newHeight === "string") {
-        return;
-      }
+  const setHeight = (newHeight: number | string) => {
+    if (typeof newHeight === "string") {
       setHeightOnly(newHeight);
-      setWidthOnly(Math.floor(newHeight * aspectRatio));
-    },
-    [aspectRatio, setWidthOnly, setHeightOnly]
-  );
+    } else {
+      setSize(Math.floor(newHeight * aspectRatio), newHeight);
+    }
+  };
 
-  const reset = useCallback(() => {
-    setWidthOnly(naturalWidth);
-    setHeightOnly(naturalHeight);
-  }, [naturalWidth, naturalHeight]);
+  const fitToOutput = () => {
+    const outputAspectRatio = outputWidth / outputHeight;
+    if (aspectRatio >= outputAspectRatio) {
+      // Track is a wide boi
+      setWidth(outputWidth);
+    } else {
+      // Track is a tall boi
+      setHeight(outputHeight);
+    }
+  };
 
-  return { width, height, setWidth, setHeight, reset };
+  return { width, height, setWidth, setHeight, fitToOutput };
 };
 
 const VideoSizeSelector: React.FC<{
-  naturalWidth: number;
-  naturalHeight: number;
+  naturalSize: Size;
+  outputSize: Size;
   onSizeChange: (size: Size) => void;
-}> = ({ naturalWidth, naturalHeight, onSizeChange }) => {
-  const { width, height, setWidth, setHeight, reset } = useVideoSizeState(
-    naturalWidth,
-    naturalHeight,
+}> = ({ naturalSize, outputSize, onSizeChange }) => {
+  const { width, height, setWidth, setHeight, fitToOutput } = useVideoSizeState(
+    naturalSize,
+    outputSize,
     onSizeChange
   );
 
   return (
-    <form>
+    <Flex as="form" direction="column">
       <Flex justify="space-between">
         <FormControl>
           <FormLabel>
@@ -77,7 +82,7 @@ const VideoSizeSelector: React.FC<{
           </FormLabel>
         </FormControl>
         <FormControl>
-          <FormLabel>
+          <FormLabel pr={0}>
             Height:
             <NumberInput value={height} min={1} onChange={setHeight}>
               <NumberInputField width="9ch" />
@@ -85,12 +90,10 @@ const VideoSizeSelector: React.FC<{
           </FormLabel>
         </FormControl>
       </Flex>
-      <FormControl>
-        <Button type="reset" leftIcon="repeat" onClick={reset}>
-          Use Natural Size
-        </Button>
-      </FormControl>
-    </form>
+      <Button leftIcon="plus-square" onClick={fitToOutput}>
+        Fit to Output
+      </Button>
+    </Flex>
   );
 };
 
