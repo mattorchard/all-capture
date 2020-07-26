@@ -1,8 +1,6 @@
 import React, { useMemo } from "react";
 import useMediaDevices from "../hooks/useMediaDevices";
 import {
-  Badge,
-  BadgeProps,
   Button,
   ButtonProps,
   Icon,
