@@ -1,23 +1,28 @@
 import { useEffect, useState } from "react";
-import useIncrement from "./useIncrement";
 
-const useMediaDevices = (): [MediaDeviceInfo[] | null, () => void] => {
-  const [devices, setDevices] = useState<MediaDeviceInfo[] | null>(null);
-  const [refreshId, incrementRefreshId] = useIncrement(0);
+const useMediaDevices = (): [MediaDeviceInfo[], () => Promise<void>] => {
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+
+  const updateDevices = async () => {
+    if (devices.length === 0) {
+      const dummyStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      dummyStream.getTracks().forEach((track) => track.stop());
+    }
+    setDevices(await navigator.mediaDevices.enumerateDevices());
+  };
+
   useEffect(() => {
-    let cancelled = false;
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      if (devices.some((device) => device.deviceId)) {
+        setDevices(devices);
+      }
+    });
+  }, []);
 
-    navigator.mediaDevices
-      .enumerateDevices()
-      .then((devices) => cancelled || setDevices(devices))
-      .catch(console.error);
-
-    return () => {
-      cancelled = true;
-    };
-  }, [refreshId]);
-
-  return [devices, incrementRefreshId];
+  return [devices, updateDevices];
 };
 
 export default useMediaDevices;
