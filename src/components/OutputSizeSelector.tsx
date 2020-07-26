@@ -19,7 +19,7 @@ const ResolutionSizes: { [name: string]: Size } = {
 const OutputSizeSelector: React.FC<{
   onSizeChange: (size: Size) => void;
 }> = ({ onSizeChange }) => {
-  const [sizeOption, setSizeOption] = useState("1280");
+  const [sizeOption, setSizeOption] = useState("720p");
 
   const [width, setWidth] = useState<number | string>(1280);
   const [height, setHeight] = useState<number | string>(720);
