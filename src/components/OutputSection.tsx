@@ -118,6 +118,12 @@ const OutputSection: React.FC<{
     if (!contextRef.current || frameIndex % 2) {
       return;
     }
+    contextRef.current.fillRect(
+      0,
+      0,
+      editorState.output.width,
+      editorState.output.height
+    );
     for (let index = editorState.videoLayers.length - 1; index >= 0; index--) {
       const videoLayer = editorState.videoLayers[index];
       const video = editorState.videoMap[videoLayer.track.id];
