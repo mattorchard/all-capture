@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import useMediaDevices from "../hooks/useMediaDevices";
 import {
   Button,
-  ButtonProps,
   Icon,
   Menu,
   MenuButton,
@@ -41,9 +40,11 @@ const getConstraintsForDeviceInfo = (
   }
 };
 
-const AddInputDeviceButton: React.FC<
-  { onTracksAdded: (annotatedTracks: AnnotatedTrack[]) => void } & ButtonProps
-> = ({ onTracksAdded, children, ...buttonProps }) => {
+const AddInputDeviceButton: React.FC<{
+  onTracksAdded: (annotatedTracks: AnnotatedTrack[]) => void;
+  isDisabled?: boolean;
+}> = ({ onTracksAdded, isDisabled = false }) => {
+  const [loading, setLoading] = useState(false);
   const [mediaDevices, updateMediaDevices] = useMediaDevices();
   const [devicesUpdatedMessage, setDevicesUpdatedMessage] = useState(false);
 
@@ -63,8 +64,13 @@ const AddInputDeviceButton: React.FC<
   }, [mediaDevices]);
 
   const handleRequestRefreshDevices = async () => {
-    await updateMediaDevices();
-    setDevicesUpdatedMessage(true);
+    try {
+      setLoading(true);
+      await updateMediaDevices();
+      setDevicesUpdatedMessage(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getTracksFromDevice = async (deviceInfo: MediaDeviceInfo) => {
@@ -92,16 +98,26 @@ const AddInputDeviceButton: React.FC<
         placement="left"
         hasArrow
       >
-        <MenuButton
-          as={Button}
-          {...buttonProps}
-          // @ts-ignore
-          isDisabled={buttonProps.isDisabled}
-          leftIcon="add"
-          rightIcon="chevron-down"
-        >
-          {children}
-        </MenuButton>
+        {audioInputDevices.length + videoInputDevices.length === 0 ? (
+          <Button
+            onClick={handleRequestRefreshDevices}
+            variantColor="blue"
+            isLoading={loading}
+            loadingText="Refreshing devices"
+          >
+            Grant Camera and Mic Permission
+          </Button>
+        ) : (
+          <MenuButton
+            as={Button}
+            // @ts-ignore
+            isDisabled={isDisabled}
+            leftIcon="add"
+            rightIcon="chevron-down"
+          >
+            Add Input device
+          </MenuButton>
+        )}
       </Tooltip>
       <MenuList>
         {videoInputDevices.length > 0 && (
@@ -135,17 +151,10 @@ const AddInputDeviceButton: React.FC<
           </>
         )}
 
-        {audioInputDevices.length + videoInputDevices.length === 0 ? (
-          <MenuItem onClick={handleRequestRefreshDevices}>
-            <Icon name="warning" mr={2} />
-            No devices found, press to grant permission
-          </MenuItem>
-        ) : (
-          <MenuItem onClick={handleRequestRefreshDevices}>
-            <Icon name="settings" mr={2} />
-            Refresh Device List
-          </MenuItem>
-        )}
+        <MenuItem onClick={handleRequestRefreshDevices}>
+          <Icon name="settings" mr={2} />
+          Refresh Device List
+        </MenuItem>
       </MenuList>
     </Menu>
   );

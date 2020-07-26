@@ -66,15 +66,20 @@ const SetupPage: React.FC<{}> = () => {
       </Flex>
 
       <OutputSection editorState={state} />
-      <Stack as="section" isInline justify="center" bg="purple.900" p={2}>
+      <Stack
+        as="section"
+        isInline
+        justify="center"
+        bg="purple.900"
+        p={2}
+        shouldWrapChildren
+      >
         <AddInputDeviceButton
           onTracksAdded={(annotatedTracks) =>
             dispatch({ type: "tracksAdded", annotatedTracks })
           }
           isDisabled={state.isRecording}
-        >
-          Add Input Device
-        </AddInputDeviceButton>
+        />
         <Button
           leftIcon="add"
           onClick={addComputerCapture}
