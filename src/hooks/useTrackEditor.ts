@@ -8,6 +8,7 @@ import {
   layerIsLive,
   VideoMapping,
 } from "../helpers/mediaHelpers";
+import { debounce } from "../helpers/timingHelpers";
 
 interface TrackEditorOutputSettings {
   fileName: string;
@@ -26,7 +27,11 @@ export interface TrackEditorState {
 type TrackEditorAction =
   | {
       // Actions with no additional params
-      type: "recordingStarted" | "recordingStopped" | "trackEnded";
+      type:
+        | "recordingStarted"
+        | "recordingStopped"
+        | "trackEnded"
+        | "videoResized";
     }
   | {
       type: "outputSettingsChanged";
@@ -74,7 +79,7 @@ const initialState: TrackEditorState = {
 const trackEditorReducer = (
   state: TrackEditorState,
   action: TrackEditorAction
-) => {
+): TrackEditorState => {
   switch (action.type) {
     case "recordingStarted": {
       return { ...state, isRecording: true };
@@ -170,6 +175,38 @@ const trackEditorReducer = (
         output: action.output,
       };
     }
+    case "videoResized": {
+      let oneOrMoreResized: boolean = false;
+
+      const videoLayers: VideoLayer[] = state.videoLayers.map((layer) => {
+        const settings = layer.track.getSettings();
+        const { width, height } = settings;
+        if (!width || !height) {
+          console.warn("New size appears to be undefined");
+          return layer;
+        }
+        if (
+          layer.naturalSize.width === width &&
+          layer.naturalSize.height === height
+        ) {
+          return layer;
+        }
+        oneOrMoreResized = true;
+        return {
+          ...layer,
+          settings,
+          naturalSize: {
+            width,
+            height,
+          },
+        };
+      });
+      // Not sure why TS is narrowing this down when it can clearly be either
+      if (oneOrMoreResized as boolean) {
+        return { ...state, videoLayers };
+      }
+      return state;
+    }
   }
 };
 
@@ -178,33 +215,51 @@ const useTrackEditor = (): [
   React.Dispatch<TrackEditorAction>
 ] => {
   const [state, dispatch] = useReducer(trackEditorReducer, initialState);
+  {
+    const { videoLayers, audioLayers, videoMap } = state;
+    useEffect(() => {
+      const allTracks = [
+        ...audioLayers.map((layer) => layer.track),
+        ...videoLayers.map((layer) => layer.track),
+      ];
 
-  const { videoLayers, audioLayers } = state;
-  useEffect(() => {
-    const allTracks = [
-      ...audioLayers.map((layer) => layer.track),
-      ...videoLayers.map((layer) => layer.track),
-    ];
+      const handleTrackEnd = (event: Event) => {
+        if (event.currentTarget instanceof MediaStreamTrack) {
+          event.currentTarget.stop();
+        }
+        dispatch({ type: "trackEnded" });
+      };
 
-    const handleTrackEnd = (event: Event) => {
-      if (event.currentTarget instanceof MediaStreamTrack) {
-        event.currentTarget.stop();
-      }
-      dispatch({ type: "trackEnded" });
-    };
+      allTracks.forEach((track) => {
+        track.addEventListener("ended", handleTrackEnd);
+      });
 
-    allTracks.forEach((track) => {
-      track.addEventListener("ended", handleTrackEnd);
-    });
+      return () =>
+        allTracks.forEach((track) =>
+          track.removeEventListener("ended", handleTrackEnd)
+        );
+    }, [videoLayers, audioLayers, dispatch]);
 
-    return () =>
-      allTracks.forEach((track) =>
-        track.removeEventListener("ended", handleTrackEnd)
+    useEffect(() => {
+      let cancelled = false;
+      const handleResize = () => {
+        if (!cancelled) {
+          dispatch({ type: "videoResized" });
+        }
+      };
+      const debouncedHandleResize = debounce(handleResize, 500);
+
+      Object.values(videoMap).forEach((video) =>
+        video.addEventListener("resize", debouncedHandleResize)
       );
-  }, [videoLayers, audioLayers, dispatch]);
-
-  // Todo: Handle video resize events (on window / tab screen shares)
-
+      return () => {
+        cancelled = true;
+        Object.values(videoMap).forEach((video) =>
+          video.removeEventListener("resize", debouncedHandleResize)
+        );
+      };
+    }, [videoMap]);
+  }
   return [state, dispatch];
 };
 
