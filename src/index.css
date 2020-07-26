@@ -44,3 +44,12 @@
 option {
   color: black;
 }
+
+.grid-stack {
+  display: grid;
+  place-items: center;
+}
+.grid-stack > * {
+  grid-row: 1;
+  grid-column: 1;
+}

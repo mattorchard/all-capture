@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import useCanvasContext from "../hooks/useCanvasContext";
 import useRafLoop from "../hooks/useRafLoop";
+import { Alert, AlertIcon } from "@chakra-ui/core";
 
 // Todo: better volume estimation (for now just the average)
 const getVolume = (frequencies: Uint8Array) => {
@@ -69,18 +70,26 @@ const AudioPreview: React.FC<{
     );
   });
   return (
-    <canvas
-      ref={canvasRefCallback}
-      width={width}
-      height={height}
-      style={{
-        width: "100%",
-        height: "auto",
-        maxWidth: 200,
-        borderRadius: ".25rem",
-        backgroundColor,
-      }}
-    />
+    <div className="grid-stack">
+      <canvas
+        ref={canvasRefCallback}
+        width={width}
+        height={height}
+        style={{
+          width: "100%",
+          height: "auto",
+          maxWidth: 200,
+          borderRadius: ".25rem",
+          backgroundColor,
+        }}
+      />
+      {isDisabled && (
+        <Alert status="info" borderRadius={4}>
+          <AlertIcon />
+          Preview Paused
+        </Alert>
+      )}
+    </div>
   );
 };
 

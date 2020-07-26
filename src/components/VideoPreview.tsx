@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { Alert, AlertIcon } from "@chakra-ui/core";
 
 const VideoPreview: React.FC<{
   videoTrack: MediaStreamTrack;
@@ -25,13 +26,21 @@ const VideoPreview: React.FC<{
   }, [isDisabled]);
 
   return (
-    <video
-      className="video-preview"
-      ref={videoRef}
-      autoPlay
-      muted
-      style={{ width: "100%", height: "auto", maxWidth: 200 }}
-    />
+    <div className="grid-stack">
+      <video
+        className="video-preview"
+        ref={videoRef}
+        autoPlay
+        muted
+        style={{ width: "100%", height: "auto", maxWidth: 200 }}
+      />
+      {isDisabled && (
+        <Alert status="info" borderRadius={4} variant="solid">
+          <AlertIcon />
+          Preview Paused
+        </Alert>
+      )}
+    </div>
   );
 };
 

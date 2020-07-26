@@ -39,7 +39,13 @@ const SetupPage: React.FC<{}> = () => {
 
   return (
     <Flex direction="column" minHeight="100vh">
-      <Flex as="header" bg="purple.800" px={4} justify="space-between">
+      <Flex
+        as="header"
+        bg="purple.800"
+        px={4}
+        justify="space-between"
+        align="center"
+      >
         <RecordingTitle
           title={state.output.fileName}
           onTitleChanged={(fileName) =>

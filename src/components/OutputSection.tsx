@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Stack } from "@chakra-ui/core";
+import { Alert, AlertIcon, Stack } from "@chakra-ui/core";
 import useRafLoop from "../hooks/useRafLoop";
 import useCanvasContext from "../hooks/useCanvasContext";
 import { FakeMediaRecorder, Size, VideoLayer } from "../types/MediaTypes";
@@ -166,12 +166,20 @@ const OutputSection: React.FC<{
       spacing={2}
       shouldWrapChildren
     >
-      <canvas
-        ref={canvasRefCallBack}
-        width={editorState.output.size.width}
-        height={editorState.output.size.height}
-        className="preview-canvas"
-      />
+      <div className="grid-stack">
+        <canvas
+          ref={canvasRefCallBack}
+          width={editorState.output.size.width}
+          height={editorState.output.size.height}
+          className="preview-canvas"
+        />
+        {editorState.videoLayers.length === 0 && (
+          <Alert status="info" borderRadius={4}>
+            <AlertIcon />
+            Add some video tracks to get started
+          </Alert>
+        )}
+      </div>
       <canvas
         ref={fpsCanvasRefCallBack}
         width={fpsCanvasSize.width}
