@@ -6,6 +6,7 @@ import TrackDetailsSection from "../TrackDetailsSection";
 import AddInputDeviceButton from "../AddInputDeviceButton";
 import { AnnotatedTrack, AudioLayer, VideoLayer } from "../../types/MediaTypes";
 import useTrackEditor from "../../hooks/useTrackEditor";
+import OutputSizeSelector from "../OutputSizeSelector";
 
 const SetupPage: React.FC<{}> = () => {
   const toast = useToast();
@@ -38,7 +39,7 @@ const SetupPage: React.FC<{}> = () => {
 
   return (
     <Flex direction="column" minHeight="100vh">
-      <Flex as="header" bg="purple.800" px={4}>
+      <Flex as="header" bg="purple.800" px={4} justify="space-between">
         <RecordingTitle
           title={state.output.fileName}
           onTitleChanged={(fileName) =>
@@ -47,6 +48,21 @@ const SetupPage: React.FC<{}> = () => {
               output: { ...state.output, fileName },
             })
           }
+        />
+        <OutputSizeSelector
+          onSizeChange={(size) => {
+            if (size === "auto") {
+              dispatch({
+                type: "outputSettingsChanged",
+                output: { ...state.output, autoSize: true },
+              });
+            } else {
+              dispatch({
+                type: "outputSettingsChanged",
+                output: { ...state.output, autoSize: false, size },
+              });
+            }
+          }}
         />
       </Flex>
 
@@ -94,7 +110,7 @@ const SetupPage: React.FC<{}> = () => {
       <TrackDetailsSection
         videoLayers={state.videoLayers}
         audioLayers={state.audioLayers}
-        outputSize={state.output}
+        outputSize={state.output.size}
         disablePreviews={state.isRecording}
         onLayerMoved={(index, direction) =>
           dispatch({ type: "layerMoved", index, direction })

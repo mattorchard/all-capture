@@ -121,13 +121,13 @@ const OutputSection: React.FC<{
     contextRef.current.fillRect(
       0,
       0,
-      editorState.output.width,
-      editorState.output.height
+      editorState.output.size.width,
+      editorState.output.size.height
     );
     for (let index = editorState.videoLayers.length - 1; index >= 0; index--) {
       const videoLayer = editorState.videoLayers[index];
       const video = editorState.videoMap[videoLayer.track.id];
-      const { x, y } = getPositionForLayer(editorState.output, videoLayer);
+      const { x, y } = getPositionForLayer(editorState.output.size, videoLayer);
       if (videoLayer.naturalSize.width === videoLayer.size.width) {
         contextRef.current!.drawImage(video, x, y);
       } else {
@@ -168,8 +168,8 @@ const OutputSection: React.FC<{
     >
       <canvas
         ref={canvasRefCallBack}
-        width={editorState.output.width}
-        height={editorState.output.height}
+        width={editorState.output.size.width}
+        height={editorState.output.size.height}
         className="preview-canvas"
       />
       <canvas

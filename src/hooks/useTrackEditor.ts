@@ -1,5 +1,10 @@
 import React, { useEffect, useReducer } from "react";
-import { AnnotatedTrack, AudioLayer, VideoLayer } from "../types/MediaTypes";
+import {
+  AnnotatedTrack,
+  AudioLayer,
+  Size,
+  VideoLayer,
+} from "../types/MediaTypes";
 import { filterOutIndex, swapValues } from "../helpers/arrayHelpers";
 import {
   annotatedTrackToAudioLayer,
@@ -12,8 +17,8 @@ import { debounce } from "../helpers/timingHelpers";
 
 interface TrackEditorOutputSettings {
   fileName: string;
-  width: number;
-  height: number;
+  size: Size;
+  autoSize: boolean;
 }
 
 export interface TrackEditorState {
@@ -68,8 +73,11 @@ const initialState: TrackEditorState = {
   isRecording: false,
   output: {
     fileName: "my-cool-recording",
-    width: 1280,
-    height: 720,
+    size: {
+      width: 1280,
+      height: 720,
+    },
+    autoSize: true,
   },
   audioLayers: [],
   videoLayers: [],
