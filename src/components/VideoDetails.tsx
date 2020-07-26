@@ -1,7 +1,7 @@
 import React from "react";
 import VideoPreview from "./VideoPreview";
 import AnchorChooser from "./AnchorChooser";
-import { Badge, Box, Flex, IconButton, Stack } from "@chakra-ui/core";
+import { Badge, Box, Flex, IconButton, Stack, Tooltip } from "@chakra-ui/core";
 import {
   AnchorValue,
   FakeSharedScreenTrackSettings,
@@ -78,31 +78,51 @@ const VideoDetails: React.FC<{
     </DetailsSubSection>
 
     <Flex direction="column" alignSelf="center" marginLeft="auto">
-      <IconButton
-        icon="triangle-up"
-        title="Move layer up"
+      <Tooltip
         aria-label="Move layer up"
-        variant="ghost"
-        style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
-        onClick={() => onLayerMoved("up")}
-      />
-      <IconButton
-        icon="triangle-down"
-        title="Move layer down"
+        label="Move layer up"
+        placement="left"
+        hasArrow
+      >
+        <IconButton
+          icon="triangle-up"
+          aria-label="Move layer up"
+          variant="ghost"
+          borderBottomLeftRadius={0}
+          borderBottomRightRadius={0}
+          onClick={() => onLayerMoved("up")}
+        />
+      </Tooltip>
+      <Tooltip
         aria-label="Move layer down"
-        variant="ghost"
-        style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
-        onClick={() => onLayerMoved("down")}
-      />
+        label="Move layer down"
+        placement="left"
+        hasArrow
+      >
+        <IconButton
+          icon="triangle-down"
+          aria-label="Move layer down"
+          variant="ghost"
+          borderTopLeftRadius={0}
+          borderTopRightRadius={0}
+          onClick={() => onLayerMoved("down")}
+        />
+      </Tooltip>
     </Flex>
 
-    <IconButton
-      onClick={onRemoveTrack}
+    <Tooltip
       aria-label="Remove track"
-      title="Remove track"
-      icon="close"
-      variant="ghost"
-    />
+      label="Remove track"
+      placement="left"
+      hasArrow
+    >
+      <IconButton
+        onClick={onRemoveTrack}
+        aria-label="Remove track"
+        icon="close"
+        variant="ghost"
+      />
+    </Tooltip>
   </Flex>
 );
 

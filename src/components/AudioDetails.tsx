@@ -11,6 +11,7 @@ import {
   NumberInputField,
   NumberInputStepper,
   Stack,
+  Tooltip,
 } from "@chakra-ui/core";
 import AudioPreview from "./AudioPreview";
 import { DetailsSubSection } from "./DetailsSubSection";
@@ -87,14 +88,20 @@ const AudioDetails: React.FC<{
         </Stack>
       </DetailsSubSection>
 
-      <IconButton
-        onClick={onRemoveTrack}
+      <Tooltip
         aria-label="Remove track"
-        title="Remove track"
-        icon="close"
-        variant="ghost"
-        ml="auto"
-      />
+        label="Remove track"
+        placement="left"
+        hasArrow
+      >
+        <IconButton
+          onClick={onRemoveTrack}
+          aria-label="Remove track"
+          icon="close"
+          variant="ghost"
+          ml="auto"
+        />
+      </Tooltip>
     </Flex>
   );
 };
