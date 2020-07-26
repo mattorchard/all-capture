@@ -16,38 +16,33 @@ const ResolutionSizes: { [name: string]: Size } = {
   "480p": { width: 640, height: 480 },
 };
 
-const useCustomWidth = (onSizeChange: (size: Size) => void) => {
-  const [width, setRawWidth] = useState<string | number>("");
-  const [height, setRawHeight] = useState<string | number>("");
-
-  return {
-    width,
-    height,
-    onWidthChange: (newWidth: string | number) => {
-      setRawWidth(newWidth);
-      if (typeof newWidth === "number" && typeof height === "number") {
-        onSizeChange({ width: newWidth, height });
-      }
-    },
-    onHeightChange: (newHeight: string | number) => {
-      setRawHeight(newHeight);
-      if (typeof newHeight === "number" && typeof width === "number") {
-        onSizeChange({ height: newHeight, width });
-      }
-    },
-  };
-};
-
 const OutputSizeSelector: React.FC<{
   onSizeChange: (size: "auto" | Size) => void;
 }> = ({ onSizeChange }) => {
   const [sizeOption, setSizeOption] = useState("auto");
-  const { width, height, onWidthChange, onHeightChange } = useCustomWidth(
-    onSizeChange
-  );
+
+  const [width, setWidth] = useState<number | string>("");
+  const [height, setHeight] = useState<number | string>("");
+
+  const handleBlur = () => {
+    if (
+      sizeOption === "custom" &&
+      width &&
+      typeof width === "number" &&
+      height &&
+      typeof height === "number"
+    ) {
+      onSizeChange({ width, height });
+    }
+  };
 
   return (
-    <Flex as="form" align="center">
+    <Flex
+      as="form"
+      align="center"
+      onSubmit={(e) => e.preventDefault()}
+      onBlur={handleBlur}
+    >
       <FormControl>
         <FormLabel fontSize="sm">
           Output Size
@@ -84,7 +79,7 @@ const OutputSizeSelector: React.FC<{
           <FormControl>
             <FormLabel fontSize="sm">
               Width
-              <NumberInput value={width} onChange={onWidthChange}>
+              <NumberInput value={width} onChange={setWidth}>
                 <NumberInputField size="sm" variant="flushed" width="10ch" />
               </NumberInput>
             </FormLabel>
@@ -99,7 +94,7 @@ const OutputSizeSelector: React.FC<{
           <FormControl>
             <FormLabel fontSize="sm">
               Height
-              <NumberInput value={height} onChange={onHeightChange}>
+              <NumberInput value={height} onChange={setHeight}>
                 <NumberInputField size="sm" variant="flushed" width="10ch" />
               </NumberInput>
             </FormLabel>
