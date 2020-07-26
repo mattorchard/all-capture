@@ -75,7 +75,7 @@ const VideoSizeSelector: React.FC<{
       <Flex justify="space-between">
         <FormControl>
           <FormLabel>
-            Width:
+            Width
             <NumberInput value={width} min={1} onChange={setWidth}>
               <NumberInputField width="9ch" />
             </NumberInput>
@@ -83,7 +83,7 @@ const VideoSizeSelector: React.FC<{
         </FormControl>
         <FormControl>
           <FormLabel pr={0}>
-            Height:
+            Height
             <NumberInput value={height} min={1} onChange={setHeight}>
               <NumberInputField width="9ch" />
             </NumberInput>

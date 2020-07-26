@@ -59,13 +59,23 @@ const AudioDetails: React.FC<{
               }
             }}
           >
-            <NumberInputField />
+            <NumberInputField
+              borderTopRightRadius={0}
+              borderBottomRightRadius={0}
+            />
             <NumberInputStepper>
               <NumberIncrementStepper />
               <NumberDecrementStepper />
             </NumberInputStepper>
           </NumberInput>
-          <Button onClick={onMuteToggle}>
+
+          <Button
+            onClick={onMuteToggle}
+            borderTopLeftRadius={0}
+            borderBottomLeftRadius={0}
+            variantColor={audioLayer.muted ? "blue" : "red"}
+            variant="outline"
+          >
             {audioLayer.muted ? "Unmute" : "Mute"}
           </Button>
         </Flex>
@@ -74,7 +84,16 @@ const AudioDetails: React.FC<{
         <Stack align="flex-start" flexWrap="wrap">
           <Badge variantColor="pink">{audioLayer.source}</Badge>
           {audioLayer.deviceInfo && (
-            <Badge variantColor="orange">
+            <Badge
+              variantColor="orange"
+              title={audioLayer.deviceInfo.label}
+              style={{
+                maxWidth: "40ch",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+              }}
+            >
               {audioLayer.deviceInfo.label || "Unlabeled Device"}
             </Badge>
           )}

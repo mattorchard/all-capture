@@ -27,7 +27,7 @@ const TrackDetailsSection: React.FC<{
 }) => {
   return (
     <Flex justify="center" bg="gray.900" p={2} flex={1}>
-      <Box as="section" width="100%" maxWidth="1200px">
+      <Box as="section" width="100%" maxWidth="900px">
         <Heading as="h2" size="lg">
           Tracks
         </Heading>

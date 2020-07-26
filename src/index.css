@@ -5,12 +5,12 @@
 .preview-canvas {
   background-color: black;
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   height: auto;
 }
 .fps-canvas {
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   height: auto;
 }
 .rotated-icon-button > svg {
