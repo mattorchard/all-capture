@@ -84,6 +84,7 @@ const SetupPage: React.FC<{}> = () => {
           leftIcon="add"
           onClick={addComputerCapture}
           isDisabled={state.isRecording}
+          id="add-computer-capture"
         >
           Add Computer Capture
         </Button>

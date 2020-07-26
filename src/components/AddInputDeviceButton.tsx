@@ -104,6 +104,7 @@ const AddInputDeviceButton: React.FC<{
             variantColor="blue"
             isLoading={loading}
             loadingText="Refreshing devices"
+            id="add-input-device"
           >
             Grant Camera and Mic Permission
           </Button>
@@ -114,6 +115,7 @@ const AddInputDeviceButton: React.FC<{
             isDisabled={isDisabled}
             leftIcon="add"
             rightIcon="chevron-down"
+            id="add-input-device"
           >
             Add Input device
           </MenuButton>

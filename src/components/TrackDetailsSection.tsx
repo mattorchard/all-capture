@@ -1,8 +1,10 @@
 import React from "react";
-import { Box, Divider, Flex, Heading, Stack, Text } from "@chakra-ui/core";
+import { Box, Divider, Flex, Heading, Stack } from "@chakra-ui/core";
 import { AudioLayer, Size, VideoLayer } from "../types/MediaTypes";
 import VideoDetails from "./VideoDetails";
 import AudioDetails from "./AudioDetails";
+import VideoTrackExplainer from "./VideoTrackExplainer";
+import AudioTrackExplainer from "./AudioTrackExplainer";
 
 const TrackDetailsSection: React.FC<{
   videoLayers: VideoLayer[];
@@ -38,7 +40,7 @@ const TrackDetailsSection: React.FC<{
         </Heading>
 
         {videoLayers.length === 0 ? (
-          <Text>No video tracks...yet!</Text>
+          <VideoTrackExplainer />
         ) : (
           <Stack as="ul">
             {videoLayers.map((videoLayer, index) => (
@@ -67,7 +69,7 @@ const TrackDetailsSection: React.FC<{
           Audio Tracks ({audioLayers.length})
         </Heading>
         {audioLayers.length === 0 ? (
-          <Text>No audio tracks...yet!</Text>
+          <AudioTrackExplainer />
         ) : (
           <Stack as="ul">
             {audioLayers.map((audioLayer, index) => (

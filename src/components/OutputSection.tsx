@@ -176,7 +176,7 @@ const OutputSection: React.FC<{
         {editorState.videoLayers.length === 0 && (
           <Alert status="info" borderRadius={4}>
             <AlertIcon />
-            Add some video tracks to get started
+            Add some video tracks to see a live preview here
           </Alert>
         )}
       </div>
