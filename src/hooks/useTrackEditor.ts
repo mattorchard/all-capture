@@ -18,7 +18,6 @@ import { debounce } from "../helpers/timingHelpers";
 interface TrackEditorOutputSettings {
   fileName: string;
   size: Size;
-  autoSize: boolean;
 }
 
 export interface TrackEditorState {
@@ -73,11 +72,7 @@ const initialState: TrackEditorState = {
   isRecording: false,
   output: {
     fileName: "my-cool-recording",
-    size: {
-      width: 1280,
-      height: 720,
-    },
-    autoSize: true,
+    size: { width: 1280, height: 720 },
   },
   audioLayers: [],
   videoLayers: [],

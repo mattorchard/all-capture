@@ -50,19 +50,12 @@ const SetupPage: React.FC<{}> = () => {
           }
         />
         <OutputSizeSelector
-          onSizeChange={(size) => {
-            if (size === "auto") {
-              dispatch({
-                type: "outputSettingsChanged",
-                output: { ...state.output, autoSize: true },
-              });
-            } else {
-              dispatch({
-                type: "outputSettingsChanged",
-                output: { ...state.output, autoSize: false, size },
-              });
-            }
-          }}
+          onSizeChange={(size) =>
+            dispatch({
+              type: "outputSettingsChanged",
+              output: { ...state.output, size },
+            })
+          }
         />
       </Flex>
 

@@ -17,12 +17,12 @@ const ResolutionSizes: { [name: string]: Size } = {
 };
 
 const OutputSizeSelector: React.FC<{
-  onSizeChange: (size: "auto" | Size) => void;
+  onSizeChange: (size: Size) => void;
 }> = ({ onSizeChange }) => {
-  const [sizeOption, setSizeOption] = useState("auto");
+  const [sizeOption, setSizeOption] = useState("1280");
 
-  const [width, setWidth] = useState<number | string>("");
-  const [height, setHeight] = useState<number | string>("");
+  const [width, setWidth] = useState<number | string>(1280);
+  const [height, setHeight] = useState<number | string>(720);
 
   const handleBlur = () => {
     if (
@@ -51,10 +51,10 @@ const OutputSizeSelector: React.FC<{
             onChange={(event) => {
               const sizeOption = event.currentTarget.value;
               setSizeOption(sizeOption);
-              if (sizeOption === "auto") {
-                onSizeChange("auto");
-              } else if (
+              if (
                 sizeOption === "custom" &&
+                width &&
+                height &&
                 typeof width === "number" &&
                 typeof height === "number"
               ) {
@@ -66,7 +66,6 @@ const OutputSizeSelector: React.FC<{
             }}
             size="sm"
           >
-            <option value="auto">Auto Size</option>
             <option value="1080p">1920&times;1080</option>
             <option value="720p">1280&times;720</option>
             <option value="480p">640&times;480</option>
