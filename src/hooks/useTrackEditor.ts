@@ -9,12 +9,14 @@ import {
   VideoMapping,
 } from "../helpers/mediaHelpers";
 
+interface TrackEditorOutputSettings {
+  fileName: string;
+  width: number;
+  height: number;
+}
+
 export interface TrackEditorState {
-  output: {
-    fileName: string;
-    width: number;
-    height: number;
-  };
+  output: TrackEditorOutputSettings;
   isRecording: boolean;
   audioLayers: AudioLayer[];
   videoLayers: VideoLayer[];
@@ -25,6 +27,10 @@ type TrackEditorAction =
   | {
       // Actions with no additional params
       type: "recordingStarted" | "recordingStopped" | "trackEnded";
+    }
+  | {
+      type: "outputSettingsChanged";
+      output: TrackEditorOutputSettings;
     }
   | {
       type: "tracksAdded";
@@ -56,7 +62,7 @@ type TrackEditorAction =
 const initialState: TrackEditorState = {
   isRecording: false,
   output: {
-    fileName: "MyRecording",
+    fileName: "my-cool-recording",
     width: 1280,
     height: 720,
   },
@@ -156,6 +162,12 @@ const trackEditorReducer = (
         audioLayers,
         videoLayers,
         videoMap: createVideoMapping(videoLayers, state.videoMap),
+      };
+    }
+    case "outputSettingsChanged": {
+      return {
+        ...state,
+        output: action.output,
       };
     }
   }

@@ -1,30 +1,20 @@
-import {
-  Editable,
-  EditableInput,
-  EditablePreview,
-  IconButton,
-  Stack,
-} from "@chakra-ui/core";
+import { Editable, EditableInput, EditablePreview } from "@chakra-ui/core";
 import React from "react";
 
-const RecordingTitle = () => (
-  <Editable defaultValue="my-screen-recording" fontSize="2xl">
-    {(props: { isEditing: boolean; onRequestEdit: () => void }) => (
-      <Stack direction="row" align="center">
-        <EditablePreview />
-        <EditableInput />
-        <span className="file-suffix">.webm</span>
-        {props.isEditing || (
-          <IconButton
-            icon="edit"
-            aria-label="Edit name"
-            variant="ghost"
-            ml={2}
-            onClick={props.onRequestEdit}
-          />
-        )}
-      </Stack>
-    )}
+const RecordingTitle: React.FC<{
+  title: string;
+  onTitleChanged: (title: string) => void;
+}> = ({ title, onTitleChanged }) => (
+  <Editable
+    defaultValue={title}
+    onSubmit={onTitleChanged}
+    fontSize="lg"
+    flexDirection="row"
+    py={2}
+    px={4}
+  >
+    <EditablePreview />
+    <EditableInput />
   </Editable>
 );
 

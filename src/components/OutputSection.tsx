@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Heading, Stack } from "@chakra-ui/core";
+import { Stack } from "@chakra-ui/core";
 import useRafLoop from "../hooks/useRafLoop";
 import useCanvasContext from "../hooks/useCanvasContext";
 import { FakeMediaRecorder, Size, VideoLayer } from "../types/MediaTypes";
@@ -160,9 +160,6 @@ const OutputSection: React.FC<{
       spacing={2}
       shouldWrapChildren
     >
-      <Heading as="h2" size="lg">
-        Output
-      </Heading>
       <canvas
         ref={canvasRefCallBack}
         width={editorState.output.width}

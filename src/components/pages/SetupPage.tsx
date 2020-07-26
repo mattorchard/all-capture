@@ -38,8 +38,16 @@ const SetupPage: React.FC<{}> = () => {
 
   return (
     <Flex direction="column" minHeight="100vh">
-      <Flex as="header" bg="purple.700" py={2} px={4}>
-        <RecordingTitle />
+      <Flex as="header" bg="purple.800" px={4}>
+        <RecordingTitle
+          title={state.output.fileName}
+          onTitleChanged={(fileName) =>
+            dispatch({
+              type: "outputSettingsChanged",
+              output: { ...state.output, fileName },
+            })
+          }
+        />
       </Flex>
 
       <OutputSection editorState={state} />
