@@ -61,9 +61,9 @@ const VideoDetails: React.FC<{
           </Badge>
         )}
         <Badge variantColor="teal">
-          {videoLayer.settings.width}x{videoLayer.settings.height}
+          {videoLayer.settings.width}&times;{videoLayer.settings.height}
         </Badge>
-        <Badge variantColor="cyan">{videoLayer.settings.frameRate}fps</Badge>
+        <Badge variantColor="cyan">{videoLayer.settings.frameRate} fps</Badge>
 
         {(videoLayer.settings as FakeSharedScreenTrackSettings)
           .displaySurface && (
